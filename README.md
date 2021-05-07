@@ -1,2 +1,1 @@
-"# expense-tracker-ts" 
-"# expense-tracker" 
+"# expense-tracker-ts"
