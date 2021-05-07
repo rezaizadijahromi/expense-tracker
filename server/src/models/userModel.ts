@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Model } from "mongoose";
 import UserInt from "./interfaces/userInterface";
 const userSchema = new mongoose.Schema(
   {
@@ -18,12 +18,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: "Password is required",
     },
+    isAdmin: {
+      type: Boolean,
+      enum: [true, false],
+      default: false,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-const User = mongoose.model<UserInt & mongoose.Document>("User", userSchema);
+const User = mongoose.model<UserInt>("User", userSchema);
 
 export default User;

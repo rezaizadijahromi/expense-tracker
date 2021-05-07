@@ -1,11 +1,19 @@
-import express, { Application, Request, Response, NextFunction } from "express";
+import express, { Application } from "express";
+import userRoutes from "./routes/userRoutes";
+import dotenv from "dotenv";
+import cors from "cors";
+
+dotenv.config();
+// Db connection
 
 const app: Application = express();
+app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("server is runnig ");
-});
+app.use(cors());
 
-const PORT = process.env.PORT || 5000;
+// Rotes
+app.use("/api/users", userRoutes);
 
-app.listen(5000, () => console.log(`Server is runnig on port ${PORT}`));
+const PORT = process.env.PORT || 5001;
+
+app.listen(PORT, () => console.log(`Server is runnig on port ${PORT}`));
