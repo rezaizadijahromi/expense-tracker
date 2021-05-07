@@ -3,6 +3,8 @@ import userRoutes from "./routes/userRoutes";
 import * as dotenv from "dotenv";
 import cors from "cors";
 
+import { notFound, errorHandler } from "./middlewares/errorMiddleWare";
+
 dotenv.config();
 // Db connection
 
@@ -15,6 +17,10 @@ app.use(cors());
 
 // Rotes
 app.use("/api/users", userRoutes);
+
+// Error middlewares
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5001;
 
