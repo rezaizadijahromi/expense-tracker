@@ -1,14 +1,14 @@
 import axios from "axios";
 
 interface UserSignupApi {
-  name: "";
-  password: "";
-  email: "";
-  open: true | false;
-  error: "";
+  name: String;
+  password: String;
+  email: String;
+  open?: true | false;
+  error?: String;
 }
 
-const signup = async (user) => {
+const signup = async (user: UserSignupApi) => {
   try {
     let response: UserSignupApi = await axios.post("/api/users/", user);
     return response;
@@ -17,7 +17,7 @@ const signup = async (user) => {
   }
 };
 
-const signin = async (user) => {
+const signin = async (user: UserSignupApi) => {
   try {
     let response = await axios.post("/api/users/login", user);
 

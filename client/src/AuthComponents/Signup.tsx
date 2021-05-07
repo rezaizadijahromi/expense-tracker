@@ -18,11 +18,11 @@ import { Link } from "react-router-dom";
 import { signup } from "./api-auth";
 
 interface UserSignup {
-  name: "";
-  password: "";
-  email: "";
-  open: true | false;
-  error: "";
+  name: String;
+  password: String;
+  email: String;
+  open?: true | false;
+  error?: String;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginTop: theme.spacing(2),
-    // color: theme.palette?.openTitle,
+    // color: theme.palette.openTitle,
   },
   textField: {
     marginLeft: theme.spacing(1),
@@ -61,12 +61,12 @@ const Signup: React.FC<UserSignup> = () => {
     error: "",
   });
 
-  const handleChange = (name, event) => {
-    setValues({ ...values, [name]: event.target.value });
-  };
+  //   const handleChange = (name, event) => {
+  //     setValues({ ...values, [name]: event.target.value });
+  //   };
 
   const clickSubmit = () => {
-    const user = {
+    const user: UserSignup = {
       name: values.name || undefined,
       email: values.email || undefined,
       password: values.password || undefined,
@@ -81,24 +81,24 @@ const Signup: React.FC<UserSignup> = () => {
     }
   };
 
-  const handleName = (e) => {
+  const handleName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({
       ...values,
-      name: e.target.values,
+      name: e.target.value,
     });
   };
 
-  const handleEmail = (e) => {
+  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({
       ...values,
-      email: e.target.values,
+      email: e.target.value,
     });
   };
 
-  const handlePassword = (e) => {
+  const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({
       ...values,
-      password: e.target.values,
+      password: e.target.value,
     });
   };
 
@@ -157,7 +157,7 @@ const Signup: React.FC<UserSignup> = () => {
           </Button>
         </CardActions>
       </Card>
-      <Dialog open={values?.open} disableBackdropClick={true}>
+      <Dialog open={values?.open!} disableBackdropClick={true}>
         <DialogTitle>New Account</DialogTitle>
         <DialogContent>
           <DialogContentText>
