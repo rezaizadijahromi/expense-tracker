@@ -1,10 +1,12 @@
 import express, { Application } from "express";
 import userRoutes from "./routes/userRoutes";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 import cors from "cors";
 
 dotenv.config();
 // Db connection
+
+const x = process.env.JWT_SECRET;
 
 const app: Application = express();
 app.use(express.json());
