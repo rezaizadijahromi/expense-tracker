@@ -6,6 +6,7 @@ import generateToken from "../utils/generateToken";
 
 import UserInt from "../models/interfaces/userInterface";
 
+// Getting request props
 export interface IGetUserAuthInfoRequest extends Request {
   user?: UserInt; // or any other type
 }
@@ -82,8 +83,76 @@ const userProfile = asyncHandler(
 
     if (user) {
       res.json(user);
+    } else {
+      res.status(404);
+      throw new Error("User not found");
     }
   },
 );
 
-export { loginUser, registerUser };
+// @desc Update user profile
+// @route PUT /api/users/profile
+// @access Private
+
+const updateUserProfile = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const { name, email, password } = req.body;
+
+    const user = await User.findById(req.user?._id);
+
+    if (user) {
+      user.name = name || user.name;
+      user.email = email || user.email;
+      user.password = password || user.password;
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    const userUpdated = await user?.save();
+
+    res.json(userUpdated);
+  },
+);
+
+// @desc Delete user profile
+// @route Delete /api/users/profile
+// @access Private
+
+const deleteUserProfile = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const user = User.findById(req.user?._id);
+    if (user) {
+      await user.remove();
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
+    res.json("User deleted");
+  },
+);
+
+// @desc Get all the users
+// @route GET /api/users/list
+// @access Private Admin
+
+const getUsersList = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const users = User.find({});
+
+    if (users) {
+      res.json(users);
+    } else {
+      res.status(404);
+      throw new Error("No users in list");
+    }
+  },
+);
+
+export {
+  loginUser,
+  registerUser,
+  userProfile,
+  updateUserProfile,
+  deleteUserProfile,
+};
