@@ -73,6 +73,8 @@ const Signup: React.FC<UserSignup> = () => {
 
     let response: UserSignup = await axios.post("/api/users/", user);
 
+    localStorage.setItem("userInfo", JSON.stringify(response));
+
     if (response.error) {
       setValues({ ...values, error: response.error });
     } else {
