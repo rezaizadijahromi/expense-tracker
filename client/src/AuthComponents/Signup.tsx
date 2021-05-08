@@ -70,8 +70,14 @@ const Signup: React.FC<UserSignup> = () => {
       password: values.password,
       error: values.error,
     };
+    console.log("here 1");
 
-    let response: UserSignup = await axios.post("/api/users/", user);
+    let response: UserSignup = await axios.post(
+      "http://localhost:5000/api/users/",
+      user,
+    );
+
+    console.log("here 2");
 
     localStorage.setItem("userInfo", JSON.stringify(response));
 
@@ -106,48 +112,50 @@ const Signup: React.FC<UserSignup> = () => {
   return (
     <div>
       <Card className={classes.card}>
-        <CardContent>
-          <Typography variant="h6" className={classes.title}>
-            Sign Up
-          </Typography>
-          <TextField
-            id="name"
-            label="Name"
-            className={classes.textField}
-            value={values.name}
-            onChange={handleName}
-            margin="normal"
-          />
-          <br />
-          <TextField
-            id="email"
-            type="email"
-            label="Email"
-            className={classes.textField}
-            value={values.email}
-            onChange={handleEmail}
-            margin="normal"
-          />
-          <br />
-          <TextField
-            id="password"
-            type="password"
-            label="Password"
-            className={classes.textField}
-            value={values.password}
-            onChange={handlePassword}
-            margin="normal"
-          />
-          <br />{" "}
-          {values.error && (
-            <Typography component="p" color="error">
-              <Icon color="error" className={classes.error}>
-                error
-              </Icon>
-              {values.error}
+        <form onSubmit={clickSubmit}>
+          <CardContent>
+            <Typography variant="h6" className={classes.title}>
+              Sign Up
             </Typography>
-          )}
-        </CardContent>
+            <TextField
+              id="name"
+              label="Name"
+              className={classes.textField}
+              value={values.name}
+              onChange={handleName}
+              margin="normal"
+            />
+            <br />
+            <TextField
+              id="email"
+              type="email"
+              label="Email"
+              className={classes.textField}
+              value={values.email}
+              onChange={handleEmail}
+              margin="normal"
+            />
+            <br />
+            <TextField
+              id="password"
+              type="password"
+              label="Password"
+              className={classes.textField}
+              value={values.password}
+              onChange={handlePassword}
+              margin="normal"
+            />
+            <br />{" "}
+            {values.error && (
+              <Typography component="p" color="error">
+                <Icon color="error" className={classes.error}>
+                  error
+                </Icon>
+                {values.error}
+              </Typography>
+            )}
+          </CardContent>
+        </form>
         <CardActions>
           <Button
             color="primary"

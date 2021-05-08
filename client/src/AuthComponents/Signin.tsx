@@ -56,7 +56,10 @@ const Signin: React.FC<UserSignIn> = (props) => {
       password: values.password || undefined,
     };
 
-    const response: UserSignIn = await axios.post("/api/users/login", user);
+    const response: UserSignIn = await axios.post(
+      "http://localhost:5000/api/users/login",
+      user,
+    );
 
     localStorage.setItem("userInfo", JSON.stringify(response));
 
