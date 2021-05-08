@@ -84,7 +84,7 @@ const loginUser = asyncHandler(
 
 const userProfile = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
-    const user = await User.findById(req.user);
+    const user = await User.findById(req.user?._id);
 
     if (user) {
       res.json(user);

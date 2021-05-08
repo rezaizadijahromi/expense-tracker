@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import User from "../models/userModel";
 import asyncHandler from "express-async-handler";
 import { NextFunction, Request, Response } from "express";
@@ -11,6 +11,12 @@ export interface IGetUserAuthInfoRequest extends Request {
   user?: UserInt | null; // or any other type
 }
 
+interface jwtPayload {
+  id: string;
+  username: string;
+  email: string;
+}
+
 const protect = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
     let token;
@@ -21,9 +27,9 @@ const protect = asyncHandler(
     ) {
       try {
         token = req.headers.authorization.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+        let decoded: jwtPayload = jwt.verify(token, "reza") as jwtPayload;
 
-        req.user = await User.findById(decoded).select("-password")!;
+        req.user = await User.findById(decoded.id).select("-password");
 
         next();
       } catch (error) {
