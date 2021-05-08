@@ -12,13 +12,14 @@ const notFound = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const errorHandler = (
-  req?: Request,
-  res?: Response,
-  next?: NextFunction,
-  err?: messageError,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  err: messageError,
 ) => {
-  const statusCode = res?.statusCode == 200 ? 500 : res?.statusCode;
-  res?.status(statusCode!);
+  const statusCode = res.statusCode == 200 ? 500 : res.statusCode;
+  res.status(400);
+  res.status(statusCode);
   res?.json({
     message: err?.message,
     stack: process.env.NODE_ENV == "production" ? null : err?.stack,

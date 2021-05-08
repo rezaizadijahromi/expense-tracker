@@ -16,8 +16,11 @@ export interface IGetUserAuthInfoRequest extends Request {
 // @access Public
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email } = req.body;
-  const password = req.body.password;
+  const { name, email, password } = req.body;
+  console.log(name);
+  console.log(email);
+  console.log(password);
+
   const alreadyExists = await User.findOne({ email });
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -30,16 +33,18 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const user = new User({
     name,
     email,
-    hashedPassword,
+    password: hashedPassword,
   });
 
   if (user) {
     const newUser = await user.save();
+    console.log(newUser);
+
     res.status(201).json({
       name,
       email,
       password,
-      token: generateToken(user._id.toString()),
+      token: generateToken(newUser._id.toString()),
     });
   } else {
     res.status(400);
