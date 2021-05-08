@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import axios from "axios";
 import React, { useState } from "react";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -15,14 +15,12 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { Link } from "react-router-dom";
 
-import { signup } from "./api-auth";
-
 interface UserSignup {
-  name: String;
-  password: String;
-  email: String;
-  open?: true | false;
-  error?: String;
+  name: string;
+  password: string;
+  email: string;
+  open: true | false;
+  error: string;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -53,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Signup: React.FC<UserSignup> = () => {
   const classes = useStyles();
-  const [values, setValues] = useState<UserSignup>({
+  const [values, setValues] = useState({
     name: "",
     password: "",
     email: "",
@@ -65,17 +63,18 @@ const Signup: React.FC<UserSignup> = () => {
   //     setValues({ ...values, [name]: event.target.value });
   //   };
 
-  const clickSubmit = () => {
-    const user: UserSignup = {
-      name: values.name || undefined,
-      email: values.email || undefined,
-      password: values.password || undefined,
+  const clickSubmit = async () => {
+    const user = {
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      error: values.error,
     };
 
-    const signupUser: Promise<UserSignup | undefined> = signup(user);
+    let response: UserSignup = await axios.post("/api/users/", user);
 
-    if (signupUser.error) {
-      setValues({ ...values, error: signupUser.error });
+    if (response.error) {
+      setValues({ ...values, error: response.error });
     } else {
       setValues({ ...values, error: "", open: true });
     }
