@@ -8,11 +8,11 @@ import Button from "@material-ui/core/Button";
 import auth from "../AuthComponents/auth-helper";
 import { Link, withRouter } from "react-router-dom";
 
-const isActive = (history, path) => {
+const isActive = (history: any, path: any) => {
   if (history.location.pathname === path) return { color: "#69f0ae" };
   else return { color: "#ffffff" };
 };
-const isButtonActive = (history, path) => {
+const isButtonActive = (history: any, path: any) => {
   if (history.location.pathname.includes(path))
     return { color: "#fffde7", backgroundColor: "#2bbd7e", marginRight: 10 };
   else
