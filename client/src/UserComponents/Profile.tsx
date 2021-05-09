@@ -16,7 +16,6 @@ import Person from "@material-ui/icons/Person";
 import Divider from "@material-ui/core/Divider";
 // import DeleteUser from "./DeleteUser";
 // import { read } from "./api-user.js";
-import auth from "../AuthComponents/auth-helper";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +73,7 @@ export default function Profile() {
           <ListItemText primary={user.name} secondary={user.email} />{" "}
           {user && (
             <ListItemSecondaryAction>
-              <Link to={"/user/edit/" + user._id}>
+              <Link to={`/profile/edit/${user._id}`}>
                 <IconButton aria-label="Edit" color="primary">
                   <Edit />
                 </IconButton>
@@ -85,8 +84,6 @@ export default function Profile() {
                   <Delete />
                 </IconButton>
               </Link>
-
-              {/* <DeleteUser userId={user._id} /> */}
             </ListItemSecondaryAction>
           )}
         </ListItem>
