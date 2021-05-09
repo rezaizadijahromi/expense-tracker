@@ -6,6 +6,7 @@ import Signup from "./AuthComponents/Signup";
 import Signin from "./AuthComponents/Signin";
 import Profile from "./UserComponents/Profile";
 import Menu from "./CoreComponents/Menu";
+import DeleteUserProfile from "./UserComponents/DeleteUserProfile";
 
 const MainRouter = () => {
   return (
@@ -16,6 +17,7 @@ const MainRouter = () => {
         <Route path="/signup" component={Signup} />
         <Route path="/signin" component={Signin} />
         <Route path="/profile" component={Profile} />
+        <Route path="/profile/delete" component={DeleteUserProfile} />
       </Switch>
     </div>
   );
