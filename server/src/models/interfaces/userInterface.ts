@@ -5,6 +5,7 @@ interface UserInt extends Document {
   email: String;
   password: String;
   isAdmin: String;
+  created: String;
 }
 
 export default UserInt;

@@ -45,6 +45,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       email,
       password,
       token: generateToken(newUser._id.toString()),
+      created: newUser?.created,
     });
   } else {
     res.status(400);
@@ -63,6 +64,8 @@ const loginUser = asyncHandler(
     const password = req.body.password;
     const user = await User.findOne({ email });
 
+    console.log(user);
+
     const passwordUser = user?.password.toString()!;
     if (user && (await bcrypt.compare(password, passwordUser))) {
       res.json({
@@ -70,6 +73,7 @@ const loginUser = asyncHandler(
         name: user.name,
         email: user.email,
         token: generateToken(user._id.toString()),
+        created: user?.created,
       });
     } else {
       res.status(401);
@@ -85,6 +89,7 @@ const loginUser = asyncHandler(
 const userProfile = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const user = await User.findById(req.user?._id);
+    console.log(user);
 
     if (user) {
       res.json(user);
@@ -129,6 +134,7 @@ const deleteUserProfile = asyncHandler(
     const user = User.findById(req.user?._id);
     if (user) {
       await user.remove();
+      res.json("User deleted");
     } else {
       res.status(404);
       throw new Error("User not found");

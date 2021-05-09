@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     enum: [true, false],
     default: false,
   },
+  created: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const User = mongoose.model<UserInt>("User", userSchema);
