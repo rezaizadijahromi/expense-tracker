@@ -42,6 +42,8 @@ const profileData = () => {
 };
 
 const Menu = () => {
+  console.log("");
+
   const history: any = useHistory();
   const [user, setUser]: any = useState();
 
