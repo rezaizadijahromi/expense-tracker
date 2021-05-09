@@ -107,6 +107,7 @@ const userProfile = asyncHandler(
 const updateUserProfile = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const { name, email, password } = req.body;
+    console.log("user update");
 
     const user = await User.findById(req.user?._id);
 
@@ -114,6 +115,8 @@ const updateUserProfile = asyncHandler(
       user.name = name || user.name;
       user.email = email || user.email;
       user.password = password || user.password;
+
+      await user.save();
     } else {
       res.status(404);
       throw new Error("User not found");
