@@ -11,6 +11,7 @@ import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Edit from "@material-ui/icons/Edit";
+import Delete from "@material-ui/icons/Delete";
 import Person from "@material-ui/icons/Person";
 import Divider from "@material-ui/core/Divider";
 // import DeleteUser from "./DeleteUser";
@@ -31,30 +32,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const profileData = () => {
+  const userLocal = JSON.parse(localStorage.getItem("userInfo")!);
+
+  if (userLocal) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userLocal.data.token}`,
+      },
+    };
+    // eslint-disable-next-line
+    const data = axios.get("http://localhost:5000/api/users/profile", config);
+
+    return userLocal.data;
+  }
+};
+
 export default function Profile() {
   const classes = useStyles();
   const [user, setUser]: any = useState({});
   //   const jwt = auth.isAuthenticated();
 
-  const profileData = () => {
-    const useLocal = JSON.parse(localStorage.getItem("userInfo")!);
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${useLocal.data.token}`,
-      },
-    };
-
-    const data = axios.get("http://localhost:5000/api/users/profile", config);
-
-    console.log(data);
-
-    setUser(useLocal.data);
-  };
-
   useEffect(() => {
-    profileData()!;
+    setUser(profileData());
   }, []);
+
+  console.log(user);
 
   return (
     <Paper className={classes.root} elevation={4}>
@@ -69,24 +72,30 @@ export default function Profile() {
             </Avatar>
           </ListItemAvatar>
           <ListItemText primary={user.name} secondary={user.email} />{" "}
-          {auth.isAuthenticated().user &&
-            auth.isAuthenticated().user._id === user._id && (
-              <ListItemSecondaryAction>
-                <Link to={"/user/edit/" + user._id}>
-                  <IconButton aria-label="Edit" color="primary">
-                    <Edit />
-                  </IconButton>
-                </Link>
-                {/* <DeleteUser userId={user._id} /> */}
-              </ListItemSecondaryAction>
-            )}
+          {user && (
+            <ListItemSecondaryAction>
+              <Link to={"/user/edit/" + user._id}>
+                <IconButton aria-label="Edit" color="primary">
+                  <Edit />
+                </IconButton>
+              </Link>
+
+              <Link to={`/profile/delete/${user._id}`}>
+                <IconButton aria-label="Edit" color="secondary">
+                  <Delete />
+                </IconButton>
+              </Link>
+
+              {/* <DeleteUser userId={user._id} /> */}
+            </ListItemSecondaryAction>
+          )}
         </ListItem>
         <Divider />
-        {/* <ListItem>
+        <ListItem>
           <ListItemText
             primary={"Joined: " + new Date(user.created).toDateString()}
           />
-        </ListItem> */}
+        </ListItem>
       </List>
     </Paper>
   );

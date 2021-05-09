@@ -16,8 +16,8 @@ const MainRouter = () => {
         <Route exact path="/" component={Home} />
         <Route path="/signup" component={Signup} />
         <Route path="/signin" component={Signin} />
-        <Route path="/profile" component={Profile} />
-        <Route path="/profile/delete" component={DeleteUserProfile} />
+        <Route path="/profile" exact component={Profile} />
+        <Route path="/profile/delete/:id" component={DeleteUserProfile} />
       </Switch>
     </div>
   );
