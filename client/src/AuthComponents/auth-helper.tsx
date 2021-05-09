@@ -2,8 +2,8 @@ const auth = {
   isAuthenticated() {
     if (typeof window == "undefined") return false;
 
-    if (localStorage.getItem("jwt"))
-      return JSON.parse(localStorage.getItem("jwt")!);
+    if (localStorage.getItem("userInfo"))
+      return JSON.parse(localStorage.getItem("userInfo")!);
     else return false;
   },
   authenticate(jwt: any, cb: any) {

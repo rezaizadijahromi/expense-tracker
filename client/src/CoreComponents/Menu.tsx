@@ -5,8 +5,9 @@ import IconButton from "@material-ui/core/IconButton";
 import HomeIcon from "@material-ui/icons/Home";
 import AddIcon from "@material-ui/icons/AddBoxRounded";
 import Button from "@material-ui/core/Button";
-import auth from "../AuthComponents/auth-helper";
-import { Link, withRouter } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const isActive = (history: any, path: any) => {
   if (history.location.pathname === path) return { color: "#69f0ae" };
@@ -23,74 +24,98 @@ const isButtonActive = (history: any, path: any) => {
       marginRight: 10,
     };
 };
-const Menu = withRouter(({ history }) => (
-  <AppBar position="static">
-    <Toolbar>
-      <Typography variant="h6" color="inherit">
-        MERN Expense Tracker
-      </Typography>
-      <div>
-        <Link to="/">
-          <IconButton aria-label="Home" style={isActive(history, "/")}>
-            <HomeIcon />
-          </IconButton>
-        </Link>
-        {auth.isAuthenticated() && (
-          <span>
-            <Link to={"/expenses/all"}>
-              <Button style={isActive(history, "/expenses/all")}>
-                Expenses
-              </Button>
-            </Link>
-            <Link to={"/expenses/reports"}>
-              <Button style={isActive(history, "/expenses/reports")}>
-                Reports
-              </Button>
-            </Link>
+
+const profileData = () => {
+  const userLocal = JSON.parse(localStorage.getItem("userInfo")!);
+
+  if (userLocal) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userLocal.data.token}`,
+      },
+    };
+    // eslint-disable-next-line
+    const data = axios.get("http://localhost:5000/api/users/profile", config);
+
+    return userLocal.data;
+  }
+};
+
+const Menu = () => {
+  const history: any = useHistory();
+  const [user, setUser]: any = useState();
+
+  const logoutUser = () => {
+    // eslint-disable-next-line
+    const userLocal = localStorage.removeItem("userInfo");
+    history.push(`/signin`);
+  };
+
+  useEffect(() => {
+    setUser(profileData());
+  }, []);
+
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" color="inherit">
+          MERN Expense Tracker
+        </Typography>
+        <div>
+          <Link to="/">
+            <IconButton aria-label="Home" style={isActive(history, "/")}>
+              <HomeIcon />
+            </IconButton>
+          </Link>
+          {user && (
+            <span>
+              <Link to={"/expenses/all"}>
+                <Button style={isActive(history, "/expenses/all")}>
+                  Expenses
+                </Button>
+              </Link>
+              <Link to={"/expenses/reports"}>
+                <Button style={isActive(history, "/expenses/reports")}>
+                  Reports
+                </Button>
+              </Link>
+            </span>
+          )}
+        </div>
+        <div style={{ position: "absolute", right: "10px" }}>
+          <span style={{ float: "right" }}>
+            {!user && (
+              <span>
+                <Link to="/signup">
+                  <Button style={isActive(history, "/signup")}>Sign up</Button>
+                </Link>
+                <Link to="/signin">
+                  <Button style={isActive(history, "/signin")}>Sign In</Button>
+                </Link>
+              </span>
+            )}
+            {user && (
+              <span>
+                <Link to="/expenses/new">
+                  <Button style={isButtonActive(history, "/expenses/new")}>
+                    <AddIcon style={{ marginRight: 4 }} /> Add Expense
+                  </Button>
+                </Link>
+                <Link to={"/profile/"}>
+                  <Button style={isActive(history, "/profile/")}>
+                    My Profile
+                  </Button>
+                </Link>
+                <Button color="inherit" onClick={logoutUser}>
+                  Sign out
+                </Button>
+              </span>
+            )}
           </span>
-        )}
-      </div>
-      <div style={{ position: "absolute", right: "10px" }}>
-        <span style={{ float: "right" }}>
-          {!auth.isAuthenticated() && (
-            <span>
-              <Link to="/signup">
-                <Button style={isActive(history, "/signup")}>Sign up</Button>
-              </Link>
-              <Link to="/signin">
-                <Button style={isActive(history, "/signin")}>Sign In</Button>
-              </Link>
-            </span>
-          )}
-          {auth.isAuthenticated() && (
-            <span>
-              <Link to="/expenses/new">
-                <Button style={isButtonActive(history, "/expenses/new")}>
-                  <AddIcon style={{ marginRight: 4 }} /> Add Expense
-                </Button>
-              </Link>
-              <Link to={"/user/" + auth.isAuthenticated().user._id}>
-                <Button
-                  style={isActive(
-                    history,
-                    "/user/" + auth.isAuthenticated().user._id,
-                  )}>
-                  My Profile
-                </Button>
-              </Link>
-              <Button
-                color="inherit"
-                onClick={() => {
-                  auth.clearJWT(() => history.push("/"));
-                }}>
-                Sign out
-              </Button>
-            </span>
-          )}
-        </span>
-      </div>
-    </Toolbar>
-  </AppBar>
-));
+        </div>
+      </Toolbar>
+    </AppBar>
+  );
+};
 
 export default Menu;
