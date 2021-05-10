@@ -59,6 +59,23 @@ const getExpenseById = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+// @desc Delete a expense by id
+// @route /api/expense/:id
+// @access Private
+
+const deleteExpense = asyncHandler(
+  async (req: ExpenseExpress, res: Response) => {
+    const expense = await Expense.findById(req.expense?._id);
+    if (expense) {
+      await expense.remove();
+      res.json("Expense deleted");
+    } else {
+      res.status(404);
+      throw new Error("not found");
+    }
+  },
+);
+
 // @desc Get a list of expense by user
 // @route /api/expense/
 // @access Private
@@ -347,11 +364,48 @@ const yearlyExpenses = asyncHandler(
   },
 );
 
+const plotExpenses = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const user = await User.findById(req.user?._id);
+
+    if (user) {
+      try {
+        const date = new Date(req.query.month as any),
+          y = date.getFullYear(),
+          m = date.getMonth();
+
+        const firstDay = new Date(y, m, 1);
+        const lastDay = new Date(y, m + 1, 0);
+
+        let totalMonthly = await Expense.aggregate([
+          {
+            $match: {
+              incurred_on: { $gte: firstDay, $lt: lastDay },
+              recorded_by: user,
+            },
+          },
+          { $project: { x: { $dayOfMonth: "$incurred_on" }, y: "$amount" } },
+        ]).exec();
+        res.json(totalMonthly);
+      } catch (error) {
+        res.status(400);
+        throw new Error(error);
+      }
+    } else {
+      res.status(404);
+      throw new Error("User not found authenticate first and then comeback");
+    }
+  },
+);
+
 export {
   createExpense,
   getExpenseById,
+  deleteExpense,
   listExpenseByUser,
   currentMonthPreview,
   getExpenseByCategory,
   averageCategories,
+  yearlyExpenses,
+  plotExpenses,
 };
