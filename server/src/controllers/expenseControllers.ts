@@ -196,7 +196,7 @@ const currentMonthPreview = asyncHandler(
 );
 
 // @desc Get a list of expense by category
-// @route /api/expense/category
+// @route /api/expense/by/category
 // @access Private
 
 const getExpenseByCategory = asyncHandler(
@@ -217,7 +217,7 @@ const getExpenseByCategory = asyncHandler(
               average: [
                 {
                   $match: {
-                    recorded_by: user,
+                    recorded_by: user._id,
                   },
                 },
                 {
@@ -246,7 +246,7 @@ const getExpenseByCategory = asyncHandler(
                 {
                   $match: {
                     incurred_on: { $gte: firstDay, $lte: lastDay },
-                    recorded_by: user,
+                    recorded_by: user._id,
                   },
                 },
                 {
@@ -293,15 +293,23 @@ const averageCategories = asyncHandler(
     const user = await User.findById(req.user?._id);
 
     if (user) {
-      const firstDay = new Date(req.query.firstDay as any);
-      const lastDay = new Date(req.query.lastDay as any);
+      // these are original code
+      // const firstDay = new Date(req.query.firstDay as any);
+      // const lastDay = new Date(req.query.lastDay as any);
+
+      // for testing
+      const date = new Date(),
+        y = date.getFullYear(),
+        m = date.getMonth();
+      const firstDay = new Date(y, m, 1);
+      const lastDay = new Date(y, m + 1, 0);
 
       try {
         let categoryMonthlyAvg = await Expense.aggregate([
           {
             $match: {
               incurred_on: { $gte: firstDay, $lte: lastDay },
-              recorded_by: user,
+              recorded_by: user._id,
             },
           },
           {
@@ -333,7 +341,7 @@ const averageCategories = asyncHandler(
 
 const yearlyExpenses = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
-    const user = User.findById(req.user?._id);
+    const user = await User.findById(req.user?._id);
 
     if (user) {
       const y = req.query.year as any;
@@ -345,7 +353,7 @@ const yearlyExpenses = asyncHandler(
           {
             $match: {
               incurred_on: { $gte: firstDay, $lt: lastDay },
-              recorded_by: user,
+              recorded_by: user._id,
             },
           },
           {
@@ -374,7 +382,11 @@ const plotExpenses = asyncHandler(
 
     if (user) {
       try {
-        const date = new Date(req.query.month as any),
+        // const date = new Date(req.query.month as any),
+        //   y = date.getFullYear(),
+        //   m = date.getMonth();
+        // testing
+        const date = new Date(),
           y = date.getFullYear(),
           m = date.getMonth();
 
@@ -385,7 +397,7 @@ const plotExpenses = asyncHandler(
           {
             $match: {
               incurred_on: { $gte: firstDay, $lt: lastDay },
-              recorded_by: user,
+              recorded_by: user._id,
             },
           },
           { $project: { x: { $dayOfMonth: "$incurred_on" }, y: "$amount" } },
