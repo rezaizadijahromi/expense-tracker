@@ -1,4 +1,6 @@
-interface Expense {
+import { Document } from "mongoose";
+
+interface ExpenseInt extends Document {
   title: String;
   category: String;
   amount: Number;
@@ -9,4 +11,4 @@ interface Expense {
   recoreded_by: String;
 }
 
-export default Expense;
+export default ExpenseInt;

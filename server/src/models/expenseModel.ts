@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Expense from "./interfaces/expenseInterface";
+import ExpenseInt from "./interfaces/expenseInterface";
 
 const expenseSchema = new mongoose.Schema({
   title: {
@@ -32,8 +32,5 @@ const expenseSchema = new mongoose.Schema({
   },
   recoreded_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
-const Expense = mongoose.model<Expense & mongoose.Document>(
-  "Expense",
-  expenseSchema,
-);
+const Expense = mongoose.model("Expense", expenseSchema);
 export default Expense;
