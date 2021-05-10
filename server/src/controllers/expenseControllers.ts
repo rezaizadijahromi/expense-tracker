@@ -5,6 +5,7 @@ import User from "../models/userModel";
 import ExpenseInt from "../models/interfaces/expenseInterface";
 import Expense from "../models/expenseModel";
 import UserInt from "../models/interfaces/userInterface";
+import { error } from "node:console";
 
 // Getting request props
 export interface IGetUserAuthInfoRequest extends Request {
@@ -87,6 +88,10 @@ const listExpenseByUser = asyncHandler(
   },
 );
 
+// @desc Get a list of expense by month
+// @route /api/expense/preview
+// @access Private
+
 const currentMonthPreview = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const user = User.findById(req.user?._id);
@@ -151,6 +156,13 @@ const currentMonthPreview = asyncHandler(
             },
           },
         ]);
+
+        let expensePreview = {
+          month: currentPreview[0].month[0],
+          today: currentPreview[0].today[0],
+          yesterday: currentPreview[0].yesterday[0],
+        };
+        res.json(expensePreview);
       } catch (error) {
         res.status(400);
         throw new Error(error);
@@ -162,9 +174,184 @@ const currentMonthPreview = asyncHandler(
   },
 );
 
+// @desc Get a list of expense by category
+// @route /api/expense/category
+// @access Private
+
+const getExpenseByCategory = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const user = await User.findById(req.user?._id);
+    if (user) {
+      const date = new Date(),
+        y = date.getFullYear(),
+        m = date.getMonth();
+
+      const firstDay = new Date(y, m, 1);
+      const lastDay = new Date(y, m + 1, 0);
+
+      try {
+        let categoryMonthlyAvg = await Expense.aggregate([
+          {
+            $facet: {
+              average: [
+                {
+                  $match: {
+                    recorded_by: user,
+                  },
+                },
+                {
+                  $group: {
+                    _id: {
+                      category: "$category",
+                      month: { $month: "$incurred_on" },
+                    },
+                    totalSpent: { $sum: "$amount" },
+                  },
+                },
+                {
+                  $group: {
+                    _id: "$_id.category",
+                    avgSpent: { $avg: "$totalSpent" },
+                  },
+                },
+                {
+                  $project: {
+                    _id: "$_id",
+                    value: { average: "$avgSpent" },
+                  },
+                },
+              ],
+              total: [
+                {
+                  $match: {
+                    incurred_on: { $gte: firstDay, $lte: lastDay },
+                    recorded_by: user,
+                  },
+                },
+                {
+                  $group: { _id: "$category", totalSpent: { $sum: "$amount" } },
+                },
+                {
+                  $project: {
+                    _id: "$_id",
+                    value: { total: "$totalSpent" },
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $project: {
+              overview: { $setUnion: ["$average", "$total"] },
+            },
+          },
+          { $unwind: "$overview" },
+          { $replaceRoot: { newRoot: "$overview" } },
+          {
+            $group: { _id: "$_id", mergedValues: { $mergeObjects: "$value" } },
+          },
+        ]).exec();
+        res.json(categoryMonthlyAvg);
+      } catch (err) {
+        console.log(err);
+        res.status(400);
+        throw new Error(err);
+      }
+    } else {
+      throw new Error("User not found authenticate first");
+    }
+  },
+);
+
+// @desc Get a average of yearly expenses
+// @route /api/expense/average/expenses
+// @access Private
+
+const averageCategories = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const user = await User.findById(req.user?._id);
+
+    if (user) {
+      const firstDay = new Date(req.query.firstDay as any);
+      const lastDay = new Date(req.query.lastDay as any);
+
+      try {
+        let categoryMonthlyAvg = await Expense.aggregate([
+          {
+            $match: {
+              incurred_on: { $gte: firstDay, $lte: lastDay },
+              recorded_by: user,
+            },
+          },
+          {
+            $group: {
+              _id: { category: "$category" },
+              totalSpent: { $sum: "$amount" },
+            },
+          },
+          {
+            $group: { _id: "$_id.category", avgSpent: { $avg: "$totalSpent" } },
+          },
+          { $project: { x: "$_id", y: "$avgSpent" } },
+        ]).exec();
+        res.json({ monthAVG: categoryMonthlyAvg });
+      } catch (error) {
+        res.status(400);
+        throw new Error(error);
+      }
+    } else {
+      res.status(404);
+      throw new Error("User not found authenticate first and then come back");
+    }
+  },
+);
+
+// @desc Get all the expense in year
+// @route /api/expense/average/expenses
+// @access Private
+
+const yearlyExpenses = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const user = User.findById(req.user?._id);
+
+    if (user) {
+      const y = req.query.year as any;
+      const firstDay = new Date(y, 0, 1);
+      const lastDay = new Date(y, 12, 0);
+
+      try {
+        let totalMonthly = await Expense.aggregate([
+          {
+            $match: {
+              incurred_on: { $gte: firstDay, $lt: lastDay },
+              recorded_by: user,
+            },
+          },
+          {
+            $group: {
+              _id: { $month: "$incurred_on" },
+              totalSpent: { $sum: "$amount" },
+            },
+          },
+          { $project: { x: "$_id", y: "$totalSpent" } },
+        ]).exec();
+        res.json({ monthTot: totalMonthly });
+      } catch (error) {
+        res.status(400);
+        throw new Error(error);
+      }
+    } else {
+      res.status(404);
+      throw new Error("User not found athenticate first and the come back");
+    }
+  },
+);
+
 export {
   createExpense,
   getExpenseById,
   listExpenseByUser,
   currentMonthPreview,
+  getExpenseByCategory,
+  averageCategories,
 };
