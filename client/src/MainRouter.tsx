@@ -10,6 +10,7 @@ import DeleteUserProfile from "./UserComponents/DeleteUserProfile";
 import EditUserProfile from "./UserComponents/EditUserProfile";
 import NewExpense from "./ExpenseComponents/NewExpense";
 import Expenses from "./ExpenseComponents/Expense";
+import DeleteExpense from "./ExpenseComponents/DeleteExpense";
 
 const MainRouter = () => {
   return (
@@ -24,6 +25,7 @@ const MainRouter = () => {
         <Route path="/profile/edit/:id" component={EditUserProfile} />
         <Route path="/expenses/all" component={Expenses} />
         <Route path="/expenses/new" component={NewExpense} />
+        <Route path="/expenses/delete/:id" component={DeleteExpense} />
       </Switch>
     </div>
   );
