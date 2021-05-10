@@ -18,7 +18,7 @@ app.use(cors());
 
 // Rotes
 app.use("/api/users", userRoutes);
-app.use("api/expense", expenseRoutes);
+app.use("/api/expense", expenseRoutes);
 
 // Error middlewares
 app.use(notFound);

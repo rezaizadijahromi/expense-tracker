@@ -20,42 +20,47 @@ export interface ExpenseExpress extends Request {
 // @route /api/expense
 // @access private
 
-const createExpense = asyncHandler(async (req: Request, res: Response) => {
-  const { title, category, amount, notes, recoreded_by } = req.body;
-  const newExpense = new Expense({
-    title,
-    category,
-    amount,
-    notes,
-    recoreded_by,
-  });
-  if (newExpense) {
-    await newExpense.save();
-    res.status(201).json(newExpense);
-  } else {
-    res.status(400);
-    throw new Error("Creating Expense failed");
-  }
-});
+const createExpense = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const user = await User.findById(req.user?._id);
+    if (user) {
+      const { title, category, amount, notes } = req.body;
+
+      const newExpense = new Expense({
+        title,
+        category,
+        amount,
+        notes,
+        recorded_by: user,
+      });
+      if (newExpense) {
+        await newExpense.save();
+        res.status(201).json(newExpense);
+      } else {
+        res.status(400);
+        throw new Error("Creating Expense failed");
+      }
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
+  },
+);
 
 // @desc Get a expense by id
 // @route /api/expense/:id
 // @access Private
 
 const getExpenseById = asyncHandler(async (req: Request, res: Response) => {
-  try {
-    let expense = await Expense.findById(req.params.id)
-      .populate("recorded_by", "_id name")
-      .exec();
+  let expense = await Expense.findById(req.params.id)
+    .populate("recorded_by", "_id name")
+    .exec();
 
-    if (!expense) {
-      res.status(400);
-      throw new Error("Expense not found");
-    }
-    await expense.save();
-  } catch (error) {
+  if (!expense) {
     res.status(400);
-    throw new Error(error);
+    throw new Error("Expense not found");
+  } else {
+    res.json(expense);
   }
 });
 
@@ -65,7 +70,7 @@ const getExpenseById = asyncHandler(async (req: Request, res: Response) => {
 
 const deleteExpense = asyncHandler(
   async (req: ExpenseExpress, res: Response) => {
-    const expense = await Expense.findById(req.expense?._id);
+    const expense = await Expense.findById(req.params.id);
     if (expense) {
       await expense.remove();
       res.json("Expense deleted");
@@ -84,14 +89,18 @@ const listExpenseByUser = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const user = await User.findById(req.user?._id);
 
-    let firstDay = req.query.firstDay;
-    let lastDay = req.query.lastDay;
+    const date = new Date(),
+      y = date.getFullYear(),
+      m = date.getMonth();
+
+    const firstDay = new Date(y, m, 1);
+    const lastDay = new Date(y, m + 1, 1);
 
     try {
       let expenses = await Expense.find({
         $and: [
           { incurred_on: { $gte: firstDay, $lte: lastDay } },
-          { recorded_by: user },
+          { recorded_by: user?._id },
         ],
       })
         .sort("incurred_on")
@@ -132,58 +141,53 @@ const currentMonthPreview = asyncHandler(
       yesterday.setUTCHours(0, 0, 0, 0);
       yesterday.setDate(yesterday.getDate() - 1);
 
-      try {
-        let currentPreview = await Expense.aggregate([
-          {
-            $facet: {
-              month: [
-                {
-                  $match: {
-                    incurred_on: { $gte: firstDay, $lt: lastDay },
-                    recorded_by: user,
-                  },
+      let currentPreview = await Expense.aggregate([
+        {
+          $facet: {
+            month: [
+              {
+                $match: {
+                  incurred_on: { $gte: firstDay, $lt: lastDay },
+                  recorded_by: req.user?._id,
                 },
-                {
-                  $group: {
-                    _id: "currentMonth",
-                    totalSpent: { $sum: "$amount" },
-                  },
+              },
+              {
+                $group: {
+                  _id: "currentMonth",
+                  totalSpent: { $sum: "$amount" },
                 },
-              ],
-              today: [
-                {
-                  $match: {
-                    incurred_on: { $gte: today, $lt: tomorrow },
-                    recorded_by: user,
-                  },
+              },
+            ],
+            today: [
+              {
+                $match: {
+                  incurred_on: { $gte: today, $lt: tomorrow },
+                  recorded_by: req.user?._id,
                 },
-                { $group: { _id: "today", totalSpent: { $sum: "$amount" } } },
-              ],
-              yesterday: [
-                {
-                  $match: {
-                    incurred_on: { $gte: yesterday, $lt: today },
-                    recorded_by: user,
-                  },
+              },
+              { $group: { _id: "today", totalSpent: { $sum: "$amount" } } },
+            ],
+            yesterday: [
+              {
+                $match: {
+                  incurred_on: { $gte: yesterday, $lt: today },
+                  recorded_by: req.user?._id,
                 },
-                {
-                  $group: { _id: "yesterday", totalSpent: { $sum: "$amount" } },
-                },
-              ],
-            },
+              },
+              {
+                $group: { _id: "yesterday", totalSpent: { $sum: "$amount" } },
+              },
+            ],
           },
-        ]);
+        },
+      ]);
 
-        let expensePreview = {
-          month: currentPreview[0].month[0],
-          today: currentPreview[0].today[0],
-          yesterday: currentPreview[0].yesterday[0],
-        };
-        res.json(expensePreview);
-      } catch (error) {
-        res.status(400);
-        throw new Error(error);
-      }
+      let expensePreview = {
+        month: currentPreview[0].month[0],
+        today: currentPreview[0].today[0],
+        yesterday: currentPreview[0].yesterday[0],
+      };
+      res.json(expensePreview);
     } else {
       res.status(404);
       throw new Error("User not found authenticate first");

@@ -30,7 +30,7 @@ const expenseSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  recoreded_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  recorded_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 const Expense = mongoose.model("Expense", expenseSchema);
 export default Expense;

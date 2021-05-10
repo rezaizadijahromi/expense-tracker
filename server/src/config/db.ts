@@ -12,6 +12,7 @@ const connectDB = async () => {
         useNewUrlParser: true,
         useCreateIndex: true,
         useFindAndModify: false,
+        autoIndex: false,
       },
     );
     console.log("MongoDB Connected");

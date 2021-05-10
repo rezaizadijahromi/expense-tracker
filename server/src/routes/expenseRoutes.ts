@@ -8,16 +8,18 @@ import {
   createExpense,
   getExpenseById,
   deleteExpense,
+  listExpenseByUser,
 } from "../controllers/expenseControllers";
 import { protect, admin } from "../middlewares/authMiddleWare";
 
 const router = express.Router();
 
-router.route("current/preview").get(protect, currentMonthPreview);
+router.route("/current/preview").get(protect, currentMonthPreview);
 router.route("/by/category").get(protect, getExpenseByCategory);
 router.route("/plot").get(protect, plotExpenses);
 router.route("/category/averages").get(protect, averageCategories);
 router.route("/yearly").get(protect, yearlyExpenses);
+router.route("/by/user").get(protect, listExpenseByUser);
 
 router.route("/").post(protect, createExpense);
 router
