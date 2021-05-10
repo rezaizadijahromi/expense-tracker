@@ -14,8 +14,11 @@ import Edit from "@material-ui/icons/Edit";
 // import DeleteExpense from "./DeleteExpense";
 import Icon from "@material-ui/core/Icon";
 import {
+  // eslint-disable-next-line
   DatePicker,
+  // eslint-disable-next-line
   DateTimePicker,
+  // eslint-disable-next-line
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 
@@ -97,7 +100,7 @@ export default function Expenses() {
       setLastDay(date);
     }
   };
-
+  // eslint-disable-next-line
   const handleChange = (name: any, index: any) => (event: any) => {
     const updatedExpenses = [...expenses];
     updatedExpenses[index][name] = event.target.value;

@@ -9,8 +9,10 @@ import Menu from "./CoreComponents/Menu";
 import DeleteUserProfile from "./UserComponents/DeleteUserProfile";
 import EditUserProfile from "./UserComponents/EditUserProfile";
 import NewExpense from "./ExpenseComponents/NewExpense";
+// eslint-disable-next-line
 import Expenses from "./ExpenseComponents/Expense";
 import DeleteExpense from "./ExpenseComponents/DeleteExpense";
+import ExpenseOverview from "./ExpenseComponents/ExpenseOverview";
 
 const MainRouter = () => {
   return (
@@ -23,9 +25,10 @@ const MainRouter = () => {
         <Route path="/profile" exact component={Profile} />
         <Route path="/profile/delete/:id" component={DeleteUserProfile} />
         <Route path="/profile/edit/:id" component={EditUserProfile} />
-        <Route path="/expenses/all" component={Expenses} />
+        {/* <Route path="/expenses/all" component={Expenses} /> */}
         <Route path="/expenses/new" component={NewExpense} />
         <Route path="/expenses/delete/:id" component={DeleteExpense} />
+        <Route path="/expenses/overview" component={ExpenseOverview} />
       </Switch>
     </div>
   );
