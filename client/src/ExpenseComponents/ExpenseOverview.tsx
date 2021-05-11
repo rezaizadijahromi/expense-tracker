@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
 interface expenseMonthPreviewInt {
   month: { average: number; total: number };
   today: { average: number; total: number };
+  yesterday: { average: number; total: number };
 }
 
 interface categoryInt {
@@ -84,9 +85,18 @@ interface categoryInt {
 
 const ExpenseOverview = () => {
   const classes = useStyles();
-  const [expensePreview, setExpensePreview]: any = useState({});
+  const [expensePreview, setExpensePreview]: any = useState({
+    month: { _id: "", totalSpent: 0 },
+    today: { _id: "", totalSpent: 0 },
+    yesterday: { _id: "", totalSpent: 0 },
+  });
 
-  const [expenseCategories, setExpenseCategories]: any = useState([{}]);
+  const [expenseCategories, setExpenseCategories]: any = useState([
+    {
+      mergedValues: { average: 0, total: 0 },
+      _id: "",
+    },
+  ]);
 
   const currentMonthPreviewData = async () => {
     const userLocal = JSON.parse(localStorage.getItem("userInfo")!);
@@ -102,8 +112,13 @@ const ExpenseOverview = () => {
         "http://localhost:5000/api/expense/current/preview",
         config,
       );
+      console.log(data);
 
-      setExpensePreview(data);
+      setExpensePreview({
+        month: data.data.month,
+        today: data.data.today,
+        yesterday: data.data.yesterday,
+      });
     }
   };
 
@@ -124,7 +139,7 @@ const ExpenseOverview = () => {
 
       console.log(data.data);
 
-      setExpenseCategories(data);
+      setExpenseCategories(data.data);
     }
   };
 
@@ -166,14 +181,14 @@ const ExpenseOverview = () => {
           alignItems: "center",
         }}>
         <Typography component="span" className={classes.totalSpent}>
-          ${expensePreview.month ? expensePreview.month : "0"}{" "}
+          ${expensePreview.month ? expensePreview.month.totalSpent : "0"}{" "}
           <span style={{ display: "block", fontSize: "0.3em" }}>
             so far this month
           </span>
         </Typography>
         <div style={{ margin: "20px 20px 20px 30px" }}>
           <Typography variant="h5" className={classes.spent} color="primary">
-            ${expensePreview.today ? expensePreview.today : "0"}{" "}
+            ${expensePreview.today ? expensePreview.today.totalSpent : "0"}{" "}
             <span className={classes.day}>today</span>
           </Typography>
           <Typography variant="h5" className={classes.spent} color="primary">
@@ -190,69 +205,75 @@ const ExpenseOverview = () => {
       </div>
       <Divider />
       <div className={classes.categorySection}>
-        {expenseCategories.length > 1
-          ? expenseCategories.map((expense: any, index: any) => {
-              return (
-                <div
-                  key={index}
-                  style={{ display: "grid", justifyContent: "center" }}>
-                  <Typography variant="h5" className={classes.catTitle}>
-                    {expense._id}
-                  </Typography>
-
-                  <div>
-                    <Typography
-                      component="span"
-                      className={`${classes.catHeading} ${classes.val}`}>
-                      past average
-                    </Typography>
-                    <Typography
-                      component="span"
-                      className={`${classes.catHeading} ${classes.val}`}>
-                      this month
-                    </Typography>
-                    <Typography
-                      component="span"
-                      className={`${classes.catHeading} ${classes.val}`}>
-                      {expense.mergedValues &&
-                      expense.mergedValues - expense.mergedValues > 0
-                        ? "spent extra"
-                        : "saved"}
-                    </Typography>
-                  </div>
-                  <div style={{ marginBottom: 3 }}>
-                    <Typography
-                      component="span"
-                      className={classes.val}
-                      style={{ color: "#595555", fontSize: "1.15em" }}>
-                      ${expense.mergedValues}
-                    </Typography>
-                    <Typography
-                      component="span"
-                      className={classes.val}
-                      style={{
-                        color: "#002f6c",
-                        fontSize: "1.6em",
-                        backgroundColor: "#eafff5",
-                        padding: "8px 0",
-                      }}>
-                      ${expense.mergedValues ? expense.mergedValues : 0}
-                    </Typography>
-                    <Typography
-                      component="span"
-                      className={classes.val}
-                      style={{ color: "#484646", fontSize: "1.25em" }}>
-                      $
-                      {expense.mergedValues
-                        ? Math.abs(expense.mergedValues - expense.mergedValues)
-                        : expense.mergedValues}
-                    </Typography>
-                  </div>
-                  <Divider style={{ marginBottom: 10 }} />
-                </div>
-              );
-            })
-          : ""}
+        {expenseCategories.map((expense: any, index: any) => {
+          return (
+            <div
+              key={index}
+              style={{ display: "grid", justifyContent: "center" }}>
+              <Typography variant="h5" className={classes.catTitle}>
+                {expense._id}
+              </Typography>
+              <Divider
+                className={classes.catDiv}
+                style={{
+                  backgroundColor: expense.mergedValues,
+                }}
+              />
+              <div>
+                <Typography
+                  component="span"
+                  className={`${classes.catHeading} ${classes.val}`}>
+                  past average
+                </Typography>
+                <Typography
+                  component="span"
+                  className={`${classes.catHeading} ${classes.val}`}>
+                  this month
+                </Typography>
+                <Typography
+                  component="span"
+                  className={`${classes.catHeading} ${classes.val}`}>
+                  {expense.mergedValues.total &&
+                  expense.mergedValues.total - expense.mergedValues.average > 0
+                    ? "spent extra"
+                    : "saved"}
+                </Typography>
+              </div>
+              <div style={{ marginBottom: 3 }}>
+                <Typography
+                  component="span"
+                  className={classes.val}
+                  style={{ color: "#595555", fontSize: "1.15em" }}>
+                  ${expense.mergedValues.average}
+                </Typography>
+                <Typography
+                  component="span"
+                  className={classes.val}
+                  style={{
+                    color: "#002f6c",
+                    fontSize: "1.6em",
+                    backgroundColor: "#eafff5",
+                    padding: "8px 0",
+                  }}>
+                  ${expense.mergedValues.total ? expense.mergedValues.total : 0}
+                </Typography>
+                <Typography
+                  component="span"
+                  className={classes.val}
+                  style={{ color: "#484646", fontSize: "1.25em" }}>
+                  $
+                  {expense.mergedValues.total
+                    ? Math.abs(
+                        expense.mergedValues.total -
+                          expense.mergedValues.average,
+                      )
+                    : expense.mergedValues.average}
+                </Typography>
+              </div>
+              <Divider style={{ marginBottom: 10 }} />
+            </div>
+          );
+        })}
       </div>
     </Card>
   );
