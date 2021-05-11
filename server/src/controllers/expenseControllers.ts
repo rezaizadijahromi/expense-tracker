@@ -344,7 +344,10 @@ const yearlyExpenses = asyncHandler(
     const user = await User.findById(req.user?._id);
 
     if (user) {
-      const y = req.query.year as any;
+      const date = new Date(),
+        y = date.getFullYear(),
+        m = date.getMonth();
+
       const firstDay = new Date(y, 0, 1);
       const lastDay = new Date(y, 12, 0);
 
@@ -364,7 +367,7 @@ const yearlyExpenses = asyncHandler(
           },
           { $project: { x: "$_id", y: "$totalSpent" } },
         ]).exec();
-        res.json({ monthTot: totalMonthly });
+        res.json(totalMonthly);
       } catch (error) {
         res.status(400);
         throw new Error(error);

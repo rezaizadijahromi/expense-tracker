@@ -131,7 +131,7 @@ const NewExpense = () => {
           setValues({ ...values, error: "" });
         }
 
-        history.push("/expenses/all");
+        history.push("/reports");
       }
     }
   };

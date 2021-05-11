@@ -15,6 +15,8 @@ import DeleteExpense from "./ExpenseComponents/DeleteExpense";
 import ExpenseOverview from "./ExpenseComponents/ExpenseOverview";
 import CategoryPie from "./ReportComponents/CategoryPie";
 import MonthlyScatter from "./ReportComponents/MonthlyScatter";
+import YearlyBar from "./ReportComponents/YearlyBar";
+import Reports from "./ReportComponents/Reports";
 
 const MainRouter = () => {
   return (
@@ -34,6 +36,8 @@ const MainRouter = () => {
 
         <Route path="/reports/pie" component={CategoryPie} />
         <Route path="/reports/plot" component={MonthlyScatter} />
+        <Route path="/reports/yearly" component={YearlyBar} />
+        <Route path="/reports" component={Reports} />
       </Switch>
     </div>
   );
