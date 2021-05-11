@@ -46,7 +46,9 @@ const Home = () => {
           </Typography>
           <CardMedia
             className={classes.media}
-            image={""}
+            image={
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4aTdsrVBZgFTtkLWMRuh9A2fncLxmOiJn7g&usqp=CAU"
+            }
             title="Unicorn Bicycle"
           />
           <Typography

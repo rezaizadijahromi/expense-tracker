@@ -4,6 +4,7 @@ import expenseRoutes from "./routes/expenseRoutes";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
+import path from "path";
 
 import { notFound, errorHandler } from "./middlewares/errorMiddleWare";
 
@@ -19,6 +20,21 @@ app.use(cors());
 // Rotes
 app.use("/api/users", userRoutes);
 app.use("/api/expense", expenseRoutes);
+
+// const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(path.resolve(), "/uploads")));
+const dev = "production";
+if (dev === "production") {
+  app.use(express.static(path.join(path.resolve(), "../client/build")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(path.resolve(), "client", "build", "index.html")),
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running....");
+  });
+}
 
 // Error middlewares
 app.use(notFound);
