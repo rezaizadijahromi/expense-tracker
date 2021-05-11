@@ -76,6 +76,10 @@ interface expenseMonthPreviewInt {
 
 interface categoryInt {
   _id: string;
+  mergedValues: {
+    average: number;
+    total: number;
+  };
 }
 
 const ExpenseOverview = () => {
@@ -99,8 +103,6 @@ const ExpenseOverview = () => {
         config,
       );
 
-      console.log("month overview", data);
-
       setExpensePreview(data);
     }
   };
@@ -115,19 +117,23 @@ const ExpenseOverview = () => {
         },
       };
 
-      const data = await axios.get(
+      const data = await axios.get<categoryInt>(
         "http://localhost:5000/api/expense/by/category",
         config,
       );
 
       console.log(data.data);
-      setExpenseCategories(data.data);
+
+      setExpenseCategories(data);
     }
   };
 
   useEffect(() => {
-    currentMonthPreviewData() as any;
-    expenseByCategory() as any;
+    currentMonthPreviewData();
+  }, []);
+
+  useEffect(() => {
+    expenseByCategory();
   }, []);
 
   //   const indicateExpense = (values: any) => {
@@ -143,6 +149,7 @@ const ExpenseOverview = () => {
   //     }
   //     return color;
   //   };
+
   return (
     <Card className={classes.card}>
       <Typography
@@ -183,72 +190,69 @@ const ExpenseOverview = () => {
       </div>
       <Divider />
       <div className={classes.categorySection}>
-        {expenseCategories.map((expense: any, index: any) => {
-          return (
-            <div
-              key={index}
-              style={{ display: "grid", justifyContent: "center" }}>
-              <Typography variant="h5" className={classes.catTitle}>
-                {expense._id}
-              </Typography>
-              {/* <Divider
-                className={classes.catDiv}
-                style={{
-                  backgroundColor: indicateExpense(expense.mergedValues),
-                }}
-              /> */}
-              <div>
-                <Typography
-                  component="span"
-                  className={`${classes.catHeading} ${classes.val}`}>
-                  past average
-                </Typography>
-                <Typography
-                  component="span"
-                  className={`${classes.catHeading} ${classes.val}`}>
-                  this month
-                </Typography>
-                <Typography
-                  component="span"
-                  className={`${classes.catHeading} ${classes.val}`}>
-                  {expense.mergedValues &&
-                  expense.mergedValues - expense.mergedValues > 0
-                    ? "spent extra"
-                    : "saved"}
-                </Typography>
-              </div>
-              <div style={{ marginBottom: 3 }}>
-                <Typography
-                  component="span"
-                  className={classes.val}
-                  style={{ color: "#595555", fontSize: "1.15em" }}>
-                  ${expense.mergedValues}
-                </Typography>
-                <Typography
-                  component="span"
-                  className={classes.val}
-                  style={{
-                    color: "#002f6c",
-                    fontSize: "1.6em",
-                    backgroundColor: "#eafff5",
-                    padding: "8px 0",
-                  }}>
-                  ${expense.mergedValues ? expense.mergedValues : 0}
-                </Typography>
-                <Typography
-                  component="span"
-                  className={classes.val}
-                  style={{ color: "#484646", fontSize: "1.25em" }}>
-                  $
-                  {expense.mergedValues
-                    ? Math.abs(expense.mergedValues - expense.mergedValues)
-                    : expense.mergedValues}
-                </Typography>
-              </div>
-              <Divider style={{ marginBottom: 10 }} />
-            </div>
-          ) as any;
-        })}
+        {expenseCategories.length > 1
+          ? expenseCategories.map((expense: any, index: any) => {
+              return (
+                <div
+                  key={index}
+                  style={{ display: "grid", justifyContent: "center" }}>
+                  <Typography variant="h5" className={classes.catTitle}>
+                    {expense._id}
+                  </Typography>
+
+                  <div>
+                    <Typography
+                      component="span"
+                      className={`${classes.catHeading} ${classes.val}`}>
+                      past average
+                    </Typography>
+                    <Typography
+                      component="span"
+                      className={`${classes.catHeading} ${classes.val}`}>
+                      this month
+                    </Typography>
+                    <Typography
+                      component="span"
+                      className={`${classes.catHeading} ${classes.val}`}>
+                      {expense.mergedValues &&
+                      expense.mergedValues - expense.mergedValues > 0
+                        ? "spent extra"
+                        : "saved"}
+                    </Typography>
+                  </div>
+                  <div style={{ marginBottom: 3 }}>
+                    <Typography
+                      component="span"
+                      className={classes.val}
+                      style={{ color: "#595555", fontSize: "1.15em" }}>
+                      ${expense.mergedValues}
+                    </Typography>
+                    <Typography
+                      component="span"
+                      className={classes.val}
+                      style={{
+                        color: "#002f6c",
+                        fontSize: "1.6em",
+                        backgroundColor: "#eafff5",
+                        padding: "8px 0",
+                      }}>
+                      ${expense.mergedValues ? expense.mergedValues : 0}
+                    </Typography>
+                    <Typography
+                      component="span"
+                      className={classes.val}
+                      style={{ color: "#484646", fontSize: "1.25em" }}>
+                      $
+                      {expense.mergedValues
+                        ? Math.abs(expense.mergedValues - expense.mergedValues)
+                        : expense.mergedValues}
+                    </Typography>
+                  </div>
+                  <Divider style={{ marginBottom: 10 }} />
+                </div>
+              );
+            })
+          : ""}
       </div>
     </Card>
   );
