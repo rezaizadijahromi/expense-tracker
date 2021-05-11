@@ -1,10 +1,10 @@
+import path from "path";
 import express, { Application } from "express";
 import userRoutes from "./routes/userRoutes";
 import expenseRoutes from "./routes/expenseRoutes";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
-import path from "path";
 
 import { notFound, errorHandler } from "./middlewares/errorMiddleWare";
 
@@ -16,6 +16,7 @@ const app: Application = express();
 app.use(express.json());
 
 app.use(cors());
+// console.log("above", path.join(path.resolve(), "../frontend/build"));
 
 // Rotes
 app.use("/api/users", userRoutes);
@@ -25,10 +26,13 @@ app.use("/api/expense", expenseRoutes);
 app.use("/uploads", express.static(path.join(path.resolve(), "/uploads")));
 const dev = "production";
 if (dev === "production") {
-  app.use(express.static(path.join(path.resolve(), "../client/build")));
+  app.use(express.static(path.join(path.resolve(), "frontend/build")));
+  console.log(path.join(path.resolve(), "frontend/build"));
 
   app.get("*", (req, res) =>
-    res.sendFile(path.resolve(path.resolve(), "client", "build", "index.html")),
+    res.sendFile(
+      path.resolve(path.resolve(), "frontend", "build", "index.html"),
+    ),
   );
 } else {
   app.get("/", (req, res) => {

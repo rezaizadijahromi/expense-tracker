@@ -5,7 +5,6 @@ import User from "../models/userModel";
 import ExpenseInt from "../models/interfaces/expenseInterface";
 import Expense from "../models/expenseModel";
 import UserInt from "../models/interfaces/userInterface";
-import { error } from "node:console";
 
 // Getting request props
 export interface IGetUserAuthInfoRequest extends Request {
