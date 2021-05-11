@@ -13,6 +13,7 @@ import NewExpense from "./ExpenseComponents/NewExpense";
 import Expenses from "./ExpenseComponents/Expense";
 import DeleteExpense from "./ExpenseComponents/DeleteExpense";
 import ExpenseOverview from "./ExpenseComponents/ExpenseOverview";
+import CategoryPie from "./ReportComponents/CategoryPie";
 
 const MainRouter = () => {
   return (
@@ -29,6 +30,8 @@ const MainRouter = () => {
         <Route path="/expenses/new" component={NewExpense} />
         <Route path="/expenses/delete/:id" component={DeleteExpense} />
         <Route path="/expenses/overview" component={ExpenseOverview} />
+
+        <Route path="/reports/pie" component={CategoryPie} />
       </Switch>
     </div>
   );
