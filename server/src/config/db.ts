@@ -1,20 +1,18 @@
 import mongoose from "mongoose";
-import "dotenv/config";
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname + "/.env" });
 
 const connectDB = async () => {
   try {
-    const uri = process.env.JWT_SECRET!;
+    const uri = process.env.MONGO_URI!;
 
-    const conn = await mongoose.connect(
-      "mongodb+srv://rezaizadi:aloneking@cluster0.ijklq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-      {
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-        autoIndex: false,
-      },
-    );
+    const conn = await mongoose.connect(uri, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      autoIndex: false,
+    });
     console.log("MongoDB Connected");
   } catch (error) {
     console.error(`Error: ${error.message}`);
