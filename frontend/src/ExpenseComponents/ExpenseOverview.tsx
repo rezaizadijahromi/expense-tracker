@@ -109,7 +109,7 @@ const ExpenseOverview = () => {
       };
 
       const data = await axios.get<expenseMonthPreviewInt>(
-        "http://localhost:5000/api/expense/current/preview",
+        "https://expense-tracker-rij.herokuapp.com/api/expense/current/preview",
         config,
       );
       console.log(data);

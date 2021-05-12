@@ -73,7 +73,7 @@ const Signup: React.FC<UserSignup> = () => {
     console.log("here 1");
 
     let response: UserSignup = await axios.post(
-      "http://localhost:5000/api/users/",
+      "https://expense-tracker-rij.herokuapp.com/api/users/",
       user,
     );
 

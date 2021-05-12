@@ -31,7 +31,10 @@ function DeleteUserProfile() {
       };
       console.log("delete request");
 
-      await axios.delete("http://localhost:5000/api/users/profile", config);
+      await axios.delete(
+        "https://expense-tracker-rij.herokuapp.com/api/users/profile",
+        config,
+      );
       deleted = true;
     }
 

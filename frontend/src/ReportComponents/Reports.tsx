@@ -24,9 +24,9 @@ export default function Reports() {
     <div className={classes.root}>
       <MonthlyScatter />
       <Divider className={classes.separator} />
-      <YearlyBar />
-      <Divider className={classes.separator} />
       <CategoryPie />
+      <Divider className={classes.separator} />
+      <YearlyBar />
     </div>
   );
 }

@@ -38,7 +38,7 @@ const MonthlyScatter = () => {
         },
       };
       const data = await axios.get(
-        "http://localhost:5000/api/expense/plot",
+        "https://expense-tracker-rij.herokuapp.com/api/expense/plot",
         config,
       );
 

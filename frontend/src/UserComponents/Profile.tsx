@@ -41,7 +41,10 @@ const profileData = () => {
       },
     };
     // eslint-disable-next-line
-    const data = axios.get("http://localhost:5000/api/users/profile", config);
+    const data = axios.get(
+      "https://expense-tracker-rij.herokuapp.com/api/users/profile",
+      config,
+    );
 
     return userLocal.data;
   }

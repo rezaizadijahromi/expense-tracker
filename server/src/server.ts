@@ -15,7 +15,14 @@ connectDB();
 const app: Application = express();
 app.use(express.json());
 
-app.use(cors());
+let corsOption = {
+  origin: [
+    "https://expense-tracker-rij.herokuapp.com",
+    "http://localhost:5000",
+  ],
+};
+
+app.use(cors(corsOption));
 // console.log("above", path.join(path.resolve(), "../frontend/build"));
 
 // Rotes

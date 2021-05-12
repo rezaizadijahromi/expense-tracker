@@ -75,7 +75,7 @@ function EditUserProfile() {
         },
       };
       let response: UserData = await axios.put(
-        "http://localhost:5000/api/users/profile",
+        "api/users/profile",
         user,
         config,
       );
@@ -102,7 +102,7 @@ function EditUserProfile() {
         },
       };
       const data = await axios.get<UserData>(
-        "http://localhost:5000/api/users/profile",
+        "https://expense-tracker-rij.herokuapp.com/api/users/profile",
         config,
       );
 

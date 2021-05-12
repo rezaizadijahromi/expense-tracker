@@ -119,7 +119,7 @@ const NewExpense = () => {
       };
 
       let response = await axios.post<ExpenseData>(
-        "http://localhost:5000/api/expense/",
+        "https://expense-tracker-rij.herokuapp.com/api/expense/",
         expense,
         config,
       );

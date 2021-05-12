@@ -47,7 +47,7 @@ const YearlyBar = () => {
         },
       };
       const data = await axios.get(
-        "http://localhost:5000/api/expense/yearly",
+        "https://expense-tracker-rij.herokuapp.com/api/expense/yearly",
         config,
       );
 

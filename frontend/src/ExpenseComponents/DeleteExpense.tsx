@@ -36,7 +36,7 @@ export default function DeleteExpense() {
         },
       };
       await axios.delete(
-        `http://localhost:5000/api/expense/${match.id}`,
+        `https://expense-tracker-rij.herokuapp.com/api/expense/${match.id}`,
         config,
       );
       console.log("deleted");
