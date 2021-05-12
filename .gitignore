@@ -2,6 +2,7 @@
 
 # dependencies
 client/node_modules
+frontend/node_modules
 /client
 server/node_modules
 /client-js

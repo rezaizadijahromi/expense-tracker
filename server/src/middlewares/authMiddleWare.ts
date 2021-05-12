@@ -2,7 +2,8 @@ import jwt, { decode } from "jsonwebtoken";
 import User from "../models/userModel";
 import asyncHandler from "express-async-handler";
 import { NextFunction, Request, Response } from "express";
-import "dotenv/config";
+import * as dotenv from "dotenv";
+dotenv.config({ path: __dirname + "/.env" });
 
 import UserInt from "../models/interfaces/userInterface";
 
@@ -25,8 +26,13 @@ const protect = asyncHandler(
       req.headers.authorization.startsWith("Bearer")
     ) {
       try {
+        console.log(process.env.JWT_SECRET!);
+
         token = req.headers.authorization.split(" ")[1];
-        let decoded: jwtPayload = jwt.verify(token, "reza") as jwtPayload;
+        let decoded: jwtPayload = jwt.verify(
+          token,
+          process.env.JWT_SECRET!,
+        ) as jwtPayload;
 
         req.user = await User.findById(decoded.id).select("-password");
 
