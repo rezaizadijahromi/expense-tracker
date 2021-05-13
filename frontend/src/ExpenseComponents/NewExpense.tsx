@@ -96,6 +96,13 @@ const NewExpense = () => {
     });
   };
 
+  const handelDate: any = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValues({
+      ...values,
+      incurred_on: e.target.value,
+    });
+  };
+
   // End Handlers
 
   // Submit
@@ -184,6 +191,19 @@ const NewExpense = () => {
               onChange={handleNotes}
               className={classes.textField}
               margin="normal"
+            />
+            <br />
+            <br />
+            <TextField
+              className={classes.textField}
+              id="date"
+              type="date"
+              defaultValue="2017-05-24T10:30"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={values.incurred_on}
+              onChange={handelDate}
             />
             <br /> <br />
             {values.error && (
