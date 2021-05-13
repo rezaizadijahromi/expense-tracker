@@ -32,8 +32,6 @@ const createCategory = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const category = req.body.category;
 
-    console.log(category);
-
     const existCategory = await Category.find({ category: category });
     if (existCategory.length > 0) {
       res.json("Already Exist");
@@ -43,10 +41,7 @@ const createCategory = asyncHandler(
       });
       await newCategory.save();
 
-      res.json({
-        category: newCategory.category,
-        _id: newCategory._id,
-      });
+      res.json(newCategory);
     }
   },
 );
