@@ -17,9 +17,6 @@ export interface IGetUserAuthInfoRequest extends Request {
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
-  console.log(name);
-  console.log(email);
-  console.log(password);
 
   const alreadyExists = await User.findOne({ email });
   const salt = await bcrypt.genSalt(10);
@@ -38,7 +35,6 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
 
   if (user) {
     const newUser = await user.save();
-    console.log(newUser);
 
     res.status(201).json({
       name,
@@ -64,8 +60,6 @@ const loginUser = asyncHandler(
     const password = req.body.password;
     const user = await User.findOne({ email });
 
-    console.log(user);
-
     const passwordUser = user?.password.toString()!;
     if (user && (await bcrypt.compare(password, passwordUser))) {
       res.json({
@@ -89,7 +83,6 @@ const loginUser = asyncHandler(
 const userProfile = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const user = await User.findById(req.user?._id);
-    console.log(user);
 
     if (user) {
       res.json(user);
@@ -107,7 +100,6 @@ const userProfile = asyncHandler(
 const updateUserProfile = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const { name, email, password } = req.body;
-    console.log("user update");
 
     const user = await User.findById(req.user?._id);
 
