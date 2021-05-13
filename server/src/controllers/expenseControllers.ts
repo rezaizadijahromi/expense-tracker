@@ -4,6 +4,7 @@ import User from "../models/userModel";
 
 import ExpenseInt from "../models/interfaces/expenseInterface";
 import Expense from "../models/expenseModel";
+import Category from "../models/CategoryModel";
 import UserInt from "../models/interfaces/userInterface";
 
 // Getting request props
@@ -14,6 +15,36 @@ export interface IGetUserAuthInfoRequest extends Request {
 export interface ExpenseExpress extends Request {
   expense?: ExpenseInt; // or any other type
 }
+
+const getAllCategory = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const getAllCategories = await Category.find({});
+
+    if (getAllCategories) {
+      res.json(getAllCategories);
+    } else {
+      res.json("No category");
+    }
+  },
+);
+
+const createCategory = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const category = req.body.category;
+
+    const existCategory = await Category.find({ category: category });
+    if (existCategory.length > 0) {
+      res.json("Already Exist");
+    } else {
+      const newCategory = new Category({
+        category,
+      });
+      await newCategory.save();
+
+      res.json(newCategory);
+    }
+  },
+);
 
 // @desc Create a expense
 // @route /api/expense
@@ -32,12 +63,23 @@ const createExpense = asyncHandler(
         recorded_by: user,
         incurred_on,
       });
+      const existCategory = await Category.find({ category: category });
+      if (existCategory.length > 0) {
+        console.log(existCategory[0]._id);
 
-      const categoryData: any = {
-        category: category,
-      };
+        const newCategoryExist = {
+          _id: existCategory[0]._id,
+          category: category,
+        };
 
-      newExpense.category.push(categoryData);
+        newExpense.category.push(newCategoryExist as any);
+      } else {
+        const newCategory = new Category({
+          category,
+        });
+        await newCategory.save();
+        newExpense.category.push(newCategory as any);
+      }
 
       if (newExpense) {
         await newExpense.save();
@@ -283,7 +325,6 @@ const getExpenseByCategory = asyncHandler(
         ]).exec();
         res.json(categoryMonthlyAvg);
       } catch (err) {
-        console.log(err);
         res.status(400);
         throw new Error(err);
       }
@@ -323,14 +364,17 @@ const averageCategories = asyncHandler(
           },
           {
             $group: {
-              _id: { category: "$category.category" },
+              _id: { category: "$category" },
               totalSpent: { $sum: "$amount" },
             },
           },
           {
-            $group: { _id: "$_id.category", avgSpent: { $avg: "$totalSpent" } },
+            $group: {
+              _id: "$_id.category",
+              avgSpent: { $avg: "$totalSpent" },
+            },
           },
-          { $project: { x: "$_id", y: "$avgSpent" } },
+          { $project: { x: "$_id.category", y: "$avgSpent" } },
         ]).exec();
         res.json({ monthAVG: categoryMonthlyAvg });
       } catch (error) {
@@ -436,4 +480,6 @@ export {
   averageCategories,
   yearlyExpenses,
   plotExpenses,
+  getAllCategory,
+  createCategory,
 };
