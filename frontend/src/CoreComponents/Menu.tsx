@@ -70,7 +70,9 @@ const Menu = () => {
           {user && (
             <span>
               <Link to={"/reports"}>
-                <Button style={isActive(history, "/report")}>Expenses</Button>
+                <Button style={isActive(history, "/expenses/overview")}>
+                  Today Expense
+                </Button>
               </Link>
               <Link to={"/reports"}>
                 <Button style={isActive(history, "/reports")}>Reports</Button>
