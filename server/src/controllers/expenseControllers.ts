@@ -16,6 +16,37 @@ export interface ExpenseExpress extends Request {
   expense?: ExpenseInt; // or any other type
 }
 
+const getAllCategory = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const getAllCategories = await Category.find({});
+    if (getAllCategories) {
+      res.json(getAllCategories);
+    } else {
+      res.json("No category");
+    }
+  },
+);
+
+const createCategory = asyncHandler(
+  async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const category = req.body.category;
+
+    console.log(category);
+
+    const existCategory = await Category.find({ category: category });
+    if (existCategory.length > 0) {
+      res.json("Already Exist");
+    } else {
+      const newCategory = new Category({
+        category,
+      });
+      await newCategory.save();
+
+      res.json(newCategory);
+    }
+  },
+);
+
 // @desc Create a expense
 // @route /api/expense
 // @access private
@@ -440,10 +471,6 @@ const plotExpenses = asyncHandler(
   },
 );
 
-const getAllCategory = asyncHandler(
-  async (req: IGetUserAuthInfoRequest, res: Response) => {},
-);
-
 export {
   createExpense,
   getExpenseById,
@@ -454,4 +481,6 @@ export {
   averageCategories,
   yearlyExpenses,
   plotExpenses,
+  getAllCategory,
+  createCategory,
 };
