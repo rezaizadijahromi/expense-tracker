@@ -229,7 +229,7 @@ const getExpenseByCategory = asyncHandler(
                 {
                   $group: {
                     _id: {
-                      category: "$category[0]",
+                      category: "$category.category",
                       month: { $month: "$incurred_on" },
                     },
                     totalSpent: { $sum: "$amount" },
@@ -256,7 +256,10 @@ const getExpenseByCategory = asyncHandler(
                   },
                 },
                 {
-                  $group: { _id: "$category", totalSpent: { $sum: "$amount" } },
+                  $group: {
+                    _id: "$category.category",
+                    totalSpent: { $sum: "$amount" },
+                  },
                 },
                 {
                   $project: {
