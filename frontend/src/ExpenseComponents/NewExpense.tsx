@@ -1,5 +1,6 @@
 import axios from "axios";
 
+import PopoverPopupState from "./PopoverPopupState";
 import React, { useEffect, useState } from "react";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -16,6 +17,7 @@ import {
   InputLabel,
   NativeSelect,
 } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 // import auth from '../auth/auth-helper'
 
 const useStyles = makeStyles((theme) => ({
@@ -138,11 +140,15 @@ const NewExpense = () => {
         },
       };
 
+      console.log("Expense", expense);
+
       let response = await axios.post<ExpenseData>(
         "https://expense-tracker-rij.herokuapp.com/api/expense/",
         expense,
         config,
       );
+
+      console.log(response.data);
 
       if (response.status === 201) {
         if (response.data.error) {
@@ -151,7 +157,7 @@ const NewExpense = () => {
           setValues({ ...values, error: "" });
         }
 
-        history.push("/reports");
+        // history.push("/reports");
       }
     }
   };
@@ -169,13 +175,11 @@ const NewExpense = () => {
     getAllCategories();
   }, []);
 
-  console.log(categories.map((cat: any) => cat.category));
-
   // end Submit
 
   return (
     <div>
-      <form onSubmit={clickSubmit}>
+      <form>
         <Card className={classes.card}>
           <CardContent>
             <Typography component="h2" className={classes.title}>
@@ -201,6 +205,7 @@ const NewExpense = () => {
               type="number"
             />
             <br />
+            <br />
             <FormControl className={classes.textField}>
               <InputLabel htmlFor="uncontrolled-native">Categories</InputLabel>
               <NativeSelect
@@ -212,11 +217,23 @@ const NewExpense = () => {
                 onChange={handleCategory as any}>
                 <option aria-label="None" value="" />
                 {categories.map((cat: any) => (
-                  <option>{cat.category}</option>
+                  <option key={cat._id}>{cat.category}</option>
                 ))}
               </NativeSelect>
-              <FormHelperText>Uncontrolled</FormHelperText>
             </FormControl>
+            {/* <br />
+            <br />
+            <FormControl className={classes.textField}>
+              <Autocomplete
+                id="combo-box-demo"
+                options={categories}
+                getOptionLabel={(option: any) => option.category}
+                onChange={handleCategory as any}
+                renderInput={(params) => (
+                  <TextField {...params} label="Combo box" variant="outlined" />
+                )}
+              />
+            </FormControl> */}
             <br />
             <TextField
               id="multiline-flexible"
@@ -262,6 +279,7 @@ const NewExpense = () => {
             <Link to="/myauctions" className={classes.submit}>
               <Button variant="contained">Cancel</Button>
             </Link>
+            <PopoverPopupState />
           </CardActions>
         </Card>
       </form>
