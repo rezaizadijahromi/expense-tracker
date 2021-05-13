@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -10,6 +10,12 @@ import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link, useHistory } from "react-router-dom";
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  NativeSelect,
+} from "@material-ui/core";
 // import auth from '../auth/auth-helper'
 
 const useStyles = makeStyles((theme) => ({
@@ -64,6 +70,13 @@ const NewExpense = () => {
     notes: "",
     error: "",
   });
+
+  const [categories, setCategories]: any = useState([
+    {
+      category: "",
+      _id: "",
+    },
+  ]);
 
   const history = useHistory();
 
@@ -143,6 +156,21 @@ const NewExpense = () => {
     }
   };
 
+  const getAllCategories = async () => {
+    const category = await axios.get(
+      "https://expense-tracker-rij.herokuapp.com/api/expense/category",
+    );
+    console.log(category.data);
+
+    setCategories(category.data);
+  };
+
+  useEffect(() => {
+    getAllCategories();
+  }, []);
+
+  console.log(categories.map((cat: any) => cat.category));
+
   // end Submit
 
   return (
@@ -173,14 +201,22 @@ const NewExpense = () => {
               type="number"
             />
             <br />
-            <TextField
-              id="category"
-              label="Category"
-              className={classes.textField}
-              value={values.category}
-              onChange={handleCategory}
-              margin="normal"
-            />
+            <FormControl className={classes.textField}>
+              <InputLabel htmlFor="uncontrolled-native">Categories</InputLabel>
+              <NativeSelect
+                defaultValue={30}
+                inputProps={{
+                  name: "name",
+                  id: "uncontrolled-native",
+                }}
+                onChange={handleCategory as any}>
+                <option aria-label="None" value="" />
+                {categories.map((cat: any) => (
+                  <option>{cat.category}</option>
+                ))}
+              </NativeSelect>
+              <FormHelperText>Uncontrolled</FormHelperText>
+            </FormControl>
             <br />
             <TextField
               id="multiline-flexible"
