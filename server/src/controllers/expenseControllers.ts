@@ -19,6 +19,7 @@ export interface ExpenseExpress extends Request {
 const getAllCategory = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const getAllCategories = await Category.find({});
+
     if (getAllCategories) {
       res.json(getAllCategories);
     } else {
@@ -42,7 +43,10 @@ const createCategory = asyncHandler(
       });
       await newCategory.save();
 
-      res.json(newCategory);
+      res.json({
+        category: newCategory.category,
+        _id: newCategory._id,
+      });
     }
   },
 );
