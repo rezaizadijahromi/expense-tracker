@@ -17,8 +17,10 @@ app.use(express.json());
 
 let corsOption = {
   origin: [
+    "http://localhost:3000",
     "https://expense-tracker-rij.herokuapp.com",
     "http://localhost:5000",
+    "http://localhost:5001",
   ],
 };
 

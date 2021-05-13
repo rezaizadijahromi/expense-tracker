@@ -23,15 +23,22 @@ const createExpense = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const user = await User.findById(req.user?._id);
     if (user) {
-      const { title, category, amount, notes } = req.body;
+      const { title, category, amount, notes, incurred_on } = req.body;
 
       const newExpense = new Expense({
         title,
-        category,
         amount,
         notes,
         recorded_by: user,
+        incurred_on,
       });
+
+      const categoryData: any = {
+        category: category,
+      };
+
+      newExpense.category.push(categoryData);
+
       if (newExpense) {
         await newExpense.save();
         res.status(201).json(newExpense);
@@ -222,7 +229,7 @@ const getExpenseByCategory = asyncHandler(
                 {
                   $group: {
                     _id: {
-                      category: "$category",
+                      category: "$category[0]",
                       month: { $month: "$incurred_on" },
                     },
                     totalSpent: { $sum: "$amount" },
@@ -313,7 +320,7 @@ const averageCategories = asyncHandler(
           },
           {
             $group: {
-              _id: { category: "$category" },
+              _id: { category: "$category.category" },
               totalSpent: { $sum: "$amount" },
             },
           },

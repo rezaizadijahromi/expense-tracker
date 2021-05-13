@@ -1,9 +1,12 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+/client
+client/package.json
+client/src/MainRouter.tsx
+client/
 client/node_modules
 frontend/node_modules
-/client
 server/node_modules
 /client-js
 /.pnp

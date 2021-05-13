@@ -9,6 +9,7 @@ import {
   getExpenseById,
   deleteExpense,
   listExpenseByUser,
+  testController,
 } from "../controllers/expenseControllers";
 import { protect, admin } from "../middlewares/authMiddleWare";
 
@@ -20,6 +21,8 @@ router.route("/category/averages").get(protect, averageCategories);
 router.route("/yearly").get(protect, yearlyExpenses);
 router.route("/plot").get(protect, plotExpenses);
 router.route("/by/user").get(protect, listExpenseByUser);
+
+router.route("/test").post(testController);
 
 router.route("/").post(protect, createExpense);
 router
