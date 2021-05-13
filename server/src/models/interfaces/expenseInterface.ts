@@ -2,7 +2,7 @@ import { Document } from "mongoose";
 
 interface ExpenseInt extends Document {
   title: String;
-  category: String;
+  category: String[];
   amount: Number;
   incurred_on: Date;
   notes: String;

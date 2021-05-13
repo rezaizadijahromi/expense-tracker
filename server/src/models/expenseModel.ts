@@ -1,17 +1,22 @@
 import mongoose from "mongoose";
 import ExpenseInt from "./interfaces/expenseInterface";
 
+const categorySchema = new mongoose.Schema({
+  category: {
+    type: String,
+    trim: true,
+    required: "Category is required",
+    unique: true,
+  },
+});
+
 const expenseSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
     require: "Title is required",
   },
-  category: {
-    type: String,
-    trim: true,
-    required: "Category is required",
-  },
+  category: [categorySchema],
   amount: {
     type: Number,
     min: 0,
@@ -32,5 +37,5 @@ const expenseSchema = new mongoose.Schema({
   },
   recorded_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
-const Expense = mongoose.model("Expense", expenseSchema);
+const Expense = mongoose.model<ExpenseInt>("Expense", expenseSchema);
 export default Expense;
