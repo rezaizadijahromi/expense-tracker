@@ -157,7 +157,7 @@ const NewExpense = () => {
           setValues({ ...values, error: "" });
         }
 
-        // history.push("/reports");
+        history.push("/reports");
       }
     }
   };
