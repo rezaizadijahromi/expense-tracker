@@ -12,10 +12,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.plotExpenses = exports.yearlyExpenses = exports.averageCategories = exports.getExpenseByCategory = exports.currentMonthPreview = exports.listExpenseByUser = exports.deleteExpense = exports.getExpenseById = exports.createExpense = void 0;
+exports.createCategory = exports.getAllCategory = exports.plotExpenses = exports.yearlyExpenses = exports.averageCategories = exports.getExpenseByCategory = exports.currentMonthPreview = exports.listExpenseByUser = exports.deleteExpense = exports.getExpenseById = exports.createExpense = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const userModel_1 = __importDefault(require("../models/userModel"));
 const expenseModel_1 = __importDefault(require("../models/expenseModel"));
+const CategoryModel_1 = __importDefault(require("../models/CategoryModel"));
+const getAllCategory = express_async_handler_1.default((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const getAllCategories = yield CategoryModel_1.default.find({});
+    if (getAllCategories) {
+        res.json(getAllCategories);
+    }
+    else {
+        res.json("No category");
+    }
+}));
+exports.getAllCategory = getAllCategory;
+const createCategory = express_async_handler_1.default((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const category = req.body.category;
+    const existCategory = yield CategoryModel_1.default.find({ category: category });
+    if (existCategory.length > 0) {
+        res.json("Already Exist");
+    }
+    else {
+        const newCategory = new CategoryModel_1.default({
+            category,
+        });
+        yield newCategory.save();
+        res.json(newCategory);
+    }
+}));
+exports.createCategory = createCategory;
 // @desc Create a expense
 // @route /api/expense
 // @access private
@@ -23,14 +49,30 @@ const createExpense = express_async_handler_1.default((req, res) => __awaiter(vo
     var _a;
     const user = yield userModel_1.default.findById((_a = req.user) === null || _a === void 0 ? void 0 : _a._id);
     if (user) {
-        const { title, category, amount, notes } = req.body;
+        const { title, category, amount, notes, incurred_on } = req.body;
         const newExpense = new expenseModel_1.default({
             title,
-            category,
             amount,
             notes,
             recorded_by: user,
+            incurred_on,
         });
+        const existCategory = yield CategoryModel_1.default.find({ category: category });
+        if (existCategory.length > 0) {
+            console.log(existCategory[0]._id);
+            const newCategoryExist = {
+                _id: existCategory[0]._id,
+                category: category,
+            };
+            newExpense.category.push(newCategoryExist);
+        }
+        else {
+            const newCategory = new CategoryModel_1.default({
+                category,
+            });
+            yield newCategory.save();
+            newExpense.category.push(newCategory);
+        }
         if (newExpense) {
             yield newExpense.save();
             res.status(201).json(newExpense);
@@ -197,7 +239,7 @@ const getExpenseByCategory = express_async_handler_1.default((req, res) => __awa
                             {
                                 $group: {
                                     _id: {
-                                        category: "$category",
+                                        category: "$category.category",
                                         month: { $month: "$incurred_on" },
                                     },
                                     totalSpent: { $sum: "$amount" },
@@ -224,7 +266,10 @@ const getExpenseByCategory = express_async_handler_1.default((req, res) => __awa
                                 },
                             },
                             {
-                                $group: { _id: "$category", totalSpent: { $sum: "$amount" } },
+                                $group: {
+                                    _id: "$category.category",
+                                    totalSpent: { $sum: "$amount" },
+                                },
                             },
                             {
                                 $project: {
@@ -249,7 +294,6 @@ const getExpenseByCategory = express_async_handler_1.default((req, res) => __awa
             res.json(categoryMonthlyAvg);
         }
         catch (err) {
-            console.log(err);
             res.status(400);
             throw new Error(err);
         }
@@ -265,14 +309,22 @@ exports.getExpenseByCategory = getExpenseByCategory;
 const averageCategories = express_async_handler_1.default((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _h;
     const user = yield userModel_1.default.findById((_h = req.user) === null || _h === void 0 ? void 0 : _h._id);
+    console.log("here");
+    const date = new Date(), y = date.getFullYear(), m = date.getMonth();
+    let firstDay = new Date(y, m, 1);
+    let lastDay = new Date(y, m + 1, 0);
+    console.log(firstDay);
+    console.log(lastDay);
+    console.log("first");
     if (user) {
         // these are original code
-        // const firstDay = new Date(req.query.firstDay as any);
-        // const lastDay = new Date(req.query.lastDay as any);
+        if (req.method == "POST") {
+            firstDay = new Date(req.body.firstDay);
+            lastDay = new Date(req.body.lastDay);
+        }
         // for testing
-        const date = new Date(), y = date.getFullYear(), m = date.getMonth();
-        const firstDay = new Date(y, m, 1);
-        const lastDay = new Date(y, m + 1, 0);
+        // const firstDay = new Date(y, m, 1);
+        // const lastDay = new Date(y, m + 1, 0);
         try {
             let categoryMonthlyAvg = yield expenseModel_1.default.aggregate([
                 {
@@ -288,9 +340,12 @@ const averageCategories = express_async_handler_1.default((req, res) => __awaite
                     },
                 },
                 {
-                    $group: { _id: "$_id.category", avgSpent: { $avg: "$totalSpent" } },
+                    $group: {
+                        _id: "$_id.category",
+                        avgSpent: { $avg: "$totalSpent" },
+                    },
                 },
-                { $project: { x: "$_id", y: "$avgSpent" } },
+                { $project: { x: "$_id.category", y: "$avgSpent" } },
             ]).exec();
             res.json({ monthAVG: categoryMonthlyAvg });
         }

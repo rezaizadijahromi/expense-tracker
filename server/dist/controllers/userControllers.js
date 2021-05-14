@@ -22,9 +22,6 @@ const generateToken_1 = __importDefault(require("../utils/generateToken"));
 // @access Public
 const registerUser = express_async_handler_1.default((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password } = req.body;
-    console.log(name);
-    console.log(email);
-    console.log(password);
     const alreadyExists = yield userModel_1.default.findOne({ email });
     const salt = yield bcrypt_1.default.genSalt(10);
     const hashedPassword = yield bcrypt_1.default.hash(password, salt);
@@ -39,7 +36,6 @@ const registerUser = express_async_handler_1.default((req, res) => __awaiter(voi
     });
     if (user) {
         const newUser = yield user.save();
-        console.log(newUser);
         res.status(201).json({
             name,
             email,
@@ -61,7 +57,6 @@ const loginUser = express_async_handler_1.default((req, res) => __awaiter(void 0
     const email = req.body.email;
     const password = req.body.password;
     const user = yield userModel_1.default.findOne({ email });
-    console.log(user);
     const passwordUser = user === null || user === void 0 ? void 0 : user.password.toString();
     if (user && (yield bcrypt_1.default.compare(password, passwordUser))) {
         res.json({
@@ -84,7 +79,6 @@ exports.loginUser = loginUser;
 const userProfile = express_async_handler_1.default((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const user = yield userModel_1.default.findById((_a = req.user) === null || _a === void 0 ? void 0 : _a._id);
-    console.log(user);
     if (user) {
         res.json(user);
     }
@@ -100,7 +94,6 @@ exports.userProfile = userProfile;
 const updateUserProfile = express_async_handler_1.default((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     const { name, email, password } = req.body;
-    console.log("user update");
     const user = yield userModel_1.default.findById((_b = req.user) === null || _b === void 0 ? void 0 : _b._id);
     if (user) {
         user.name = name || user.name;

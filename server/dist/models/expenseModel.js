@@ -4,17 +4,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+const categorySchema = new mongoose_1.default.Schema({
+    category: {
+        type: String,
+        trim: true,
+        required: "Category is required",
+        unique: true,
+    },
+});
 const expenseSchema = new mongoose_1.default.Schema({
     title: {
         type: String,
         trim: true,
         require: "Title is required",
     },
-    category: {
-        type: String,
-        trim: true,
-        required: "Category is required",
-    },
+    category: [categorySchema],
     amount: {
         type: Number,
         min: 0,
