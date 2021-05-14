@@ -133,7 +133,7 @@ const ExpenseOverview = () => {
       };
 
       const data = await axios.get<categoryInt>(
-        "http://localhost:5000/api/expense/by/category",
+        "https://expense-tracker-rij.herokuapp.com/api/expense/by/category",
         config,
       );
 
