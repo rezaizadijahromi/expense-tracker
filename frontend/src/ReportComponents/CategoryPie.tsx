@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 // import DateFnsUtils from "@date-io/date-fns";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { VictoryPie, VictoryTheme, VictoryLabel } from "victory";
+import { TextField } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -22,11 +23,15 @@ const useStyles = makeStyles((theme) => ({
     margin: "8px 16px",
     width: 240,
   },
+  submit: {
+    margin: "auto",
+    marginLeft: "220px",
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 const CategoryPie = () => {
   const classes = useStyles();
-  const [error, setError] = useState("");
   const [expenses, setExpenses]: any = useState([
     {
       monthAVG: {
@@ -39,8 +44,8 @@ const CategoryPie = () => {
   const date = new Date(),
     y = date.getFullYear(),
     m = date.getMonth();
-  const [firstDay, setFirstDay] = useState(new Date(y, m, 1));
-  const [lastDay, setLastDay] = useState(new Date(y, m + 1, 0));
+  const [firstDay, setFirstDay]: any = useState(new Date());
+  const [lastDay, setLastDay]: any = useState(new Date());
 
   const loadData = async () => {
     const userLocal = JSON.parse(localStorage.getItem("userInfo")!);
@@ -56,8 +61,33 @@ const CategoryPie = () => {
         config,
       );
 
-      console.log(data.data);
+      setExpenses({ monthAVG: data.data.monthAVG });
+    }
+  };
 
+  console.log("here 1");
+
+  const submitDate = async () => {
+    console.log("here");
+    const userLocal = JSON.parse(localStorage.getItem("userInfo")!);
+
+    const dateData = {
+      firstDay,
+      lastDay,
+    };
+
+    console.log("Data", dateData);
+    if (userLocal) {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userLocal.data.token}`,
+        },
+      };
+      const data = await axios.post(
+        "https://expense-tracker-rij.herokuapp.com/api/expense/category/averages",
+        dateData,
+        config,
+      );
       setExpenses({ monthAVG: data.data.monthAVG });
     }
   };
@@ -67,14 +97,6 @@ const CategoryPie = () => {
   }, []);
 
   console.log(expenses);
-
-  const handleDateChange = (name: any) => (date: any) => {
-    if (name === "firstDay") {
-      setFirstDay(date);
-    } else {
-      setLastDay(date);
-    }
-  };
 
   return (
     <div>
@@ -111,6 +133,38 @@ const CategoryPie = () => {
             text={`Spent \nper category`}
           />
         </svg>
+
+        <form>
+          <TextField
+            className={classes.textField}
+            id="date"
+            type="date"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            value={firstDay}
+            onChange={(e) => setFirstDay(e.target.value)}
+          />
+
+          <TextField
+            className={classes.textField}
+            id="date"
+            type="date"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            value={lastDay}
+            onChange={(e) => setLastDay(e.target.value)}
+          />
+
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.submit}
+            onClick={submitDate}>
+            Submit
+          </Button>
+        </form>
       </div>
     </div>
   ) as any;

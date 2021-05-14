@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/core/styles";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import axios from "axios";
 
 interface UserSignIn {
@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Signin: React.FC<UserSignIn> = (props) => {
   const classes = useStyles();
+  const history = useHistory();
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -66,7 +67,9 @@ const Signin: React.FC<UserSignIn> = (props) => {
     if (response.error) {
       setValues({ ...values, error: response.error });
     } else {
-      setValues({ ...values, error: "", redirectToReferrer: true });
+      setValues({ ...values, error: "" });
+      history.push("/profile");
+      window.location.reload();
     }
   };
 
@@ -83,17 +86,6 @@ const Signin: React.FC<UserSignIn> = (props) => {
       password: e.target.value,
     });
   };
-
-  // props is here
-  const { from } = {
-    from: {
-      pathname: "/",
-    },
-  };
-  const { redirectToReferrer } = values;
-  if (redirectToReferrer) {
-    return <Redirect to={from} />;
-  }
 
   return (
     <Card className={classes.card}>
