@@ -341,18 +341,29 @@ const getExpenseByCategory = asyncHandler(
 const averageCategories = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
     const user = await User.findById(req.user?._id);
+    console.log("here");
+    const date = new Date(),
+      y = date.getFullYear(),
+      m = date.getMonth();
+
+    let firstDay = new Date(y, m, 1);
+    let lastDay = new Date(y, m + 1, 0);
+
+    console.log(firstDay);
+    console.log(lastDay);
+    console.log("first");
 
     if (user) {
       // these are original code
-      // const firstDay = new Date(req.query.firstDay as any);
-      // const lastDay = new Date(req.query.lastDay as any);
+      if (req.method == "POST") {
+        firstDay = new Date(req.body.firstDay);
+        lastDay = new Date(req.body.lastDay);
+      }
 
       // for testing
-      const date = new Date(),
-        y = date.getFullYear(),
-        m = date.getMonth();
-      const firstDay = new Date(y, m, 1);
-      const lastDay = new Date(y, m + 1, 0);
+
+      // const firstDay = new Date(y, m, 1);
+      // const lastDay = new Date(y, m + 1, 0);
 
       try {
         let categoryMonthlyAvg = await Expense.aggregate([

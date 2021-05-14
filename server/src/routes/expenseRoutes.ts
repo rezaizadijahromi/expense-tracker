@@ -19,7 +19,10 @@ router.route("/category").post(createCategory).get(getAllCategory);
 
 router.route("/current/preview").get(protect, currentMonthPreview);
 router.route("/by/category").get(protect, getExpenseByCategory);
-router.route("/category/averages").get(protect, averageCategories);
+router
+  .route("/category/averages")
+  .get(protect, averageCategories)
+  .post(protect, averageCategories);
 router.route("/yearly").get(protect, yearlyExpenses);
 router.route("/plot").get(protect, plotExpenses);
 router.route("/by/user").get(protect, listExpenseByUser);
