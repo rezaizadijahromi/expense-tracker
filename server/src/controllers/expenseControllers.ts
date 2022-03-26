@@ -168,7 +168,7 @@ const listExpenseByUser = asyncHandler(
 
 const currentMonthPreview = asyncHandler(
   async (req: IGetUserAuthInfoRequest, res: Response) => {
-    const user = User.findById(req.user?._id);
+    const user = User.findById(req.user?._id) as any;
 
     if (user) {
       const date = new Date(),

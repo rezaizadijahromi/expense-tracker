@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -51,6 +51,9 @@ const Signin: React.FC<UserSignIn> = (props) => {
     redirectToReferrer: false,
   });
 
+  const userLocal = JSON.parse(localStorage.getItem("userInfo") as any);
+
+
   const clickSubmit = async () => {
     const user = {
       email: values.email || undefined,
@@ -86,6 +89,12 @@ const Signin: React.FC<UserSignIn> = (props) => {
       password: e.target.value,
     });
   };
+
+  useEffect(() => {
+    if (userLocal){
+      history.push("/profile")
+    }
+  })
 
   return (
     <Card className={classes.card}>

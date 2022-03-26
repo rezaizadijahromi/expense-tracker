@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -9,6 +9,7 @@ import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/core/styles";
 import { Redirect, useHistory } from "react-router-dom";
 import axios from "axios";
+import { ExpandLessSharp } from "@material-ui/icons";
 
 interface UserSignIn {
   email: string;
@@ -51,6 +52,9 @@ const Signin: React.FC<UserSignIn> = (props) => {
     redirectToReferrer: false,
   });
 
+  const userLocal = JSON.parse(localStorage.getItem("userInfo") as any);
+
+
   const clickSubmit = async () => {
     const user = {
       email: values.email || undefined,
@@ -87,6 +91,11 @@ const Signin: React.FC<UserSignIn> = (props) => {
     });
   };
 
+  useEffect(() => {
+    if (userLocal){
+      history.push("/profile")
+    }
+  })
   // props is here
   // const { from } = {
   //   from: {

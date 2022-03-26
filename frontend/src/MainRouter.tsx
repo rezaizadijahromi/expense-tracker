@@ -23,7 +23,7 @@ const MainRouter = () => {
     <div>
       <Menu />
       <Switch>
-        <Route exact path="/" component={Home} />
+        <Route exact path="/" component={Signin} />
         <Route path="/signup" component={Signup} />
         <Route path="/signin" component={Signin} />
         <Route path="/profile" exact component={Profile} />
