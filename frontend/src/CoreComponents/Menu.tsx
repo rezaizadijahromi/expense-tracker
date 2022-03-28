@@ -69,12 +69,12 @@ const Menu = () => {
           </Link>
           {user && (
             <span>
-              <Link to={"/expenses/overview"}>
+              <Link to={"/expenses/overview"} style={{textDecoration: "None"}}>
                 <Button style={isActive(history, "/expenses/overview")}>
                   Today Expense
                 </Button>
               </Link>
-              <Link to={"/reports"}>
+              <Link to={"/reports"} style={{textDecoration: "None"}}>
                 <Button style={isActive(history, "/reports")}>Reports</Button>
               </Link>
             </span>
@@ -84,27 +84,27 @@ const Menu = () => {
           <span style={{ float: "right" }}>
             {!user && (
               <span>
-                <Link to="/signup">
+                <Link to="/signup" style={{textDecoration: "None"}}>
                   <Button style={isActive(history, "/signup")}>Sign up</Button>
                 </Link>
-                <Link to="/signin">
+                <Link to="/signin" style={{textDecoration: "None"}}>
                   <Button style={isActive(history, "/signin")}>Sign In</Button>
                 </Link>
               </span>
             )}
             {user && (
               <span>
-                <Link to="/expenses/new">
+                <Link to="/expenses/new" style={{textDecoration: "None"}}>
                   <Button style={isButtonActive(history, "/expenses/new")}>
                     <AddIcon style={{ marginRight: 4 }} /> Add Expense
                   </Button>
                 </Link>
-                <Link to={"/profile/"}>
+                <Link to={"/profile/"} style={{textDecoration: "None"}}>
                   <Button style={isActive(history, "/profile/")}>
                     My Profile
                   </Button>
                 </Link>
-                <Button color="inherit" onClick={logoutUser}>
+                <Button color="inherit" onClick={logoutUser} style={{textDecoration: "None"}}>
                   Sign out
                 </Button>
               </span>
