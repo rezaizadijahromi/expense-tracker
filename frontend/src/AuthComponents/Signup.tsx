@@ -165,6 +165,11 @@ const Signup: React.FC<UserSignup> = () => {
             Submit
           </Button>
         </CardActions>
+        <span>
+        <Link to={"/signin"} style={{textDecoration: "None"}}>
+          <span>Have account click</span> here
+        </Link>
+      </span>
       </Card>
       <Dialog open={values?.open!} disableBackdropClick={true}>
         <DialogTitle>New Account</DialogTitle>

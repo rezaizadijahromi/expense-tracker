@@ -85,8 +85,8 @@ const MonthlyScatter = () => {
         />
         <VictoryLabel
           textAnchor="middle"
-          style={{ fontSize: 14, fill: "#8b8b8b" }}
-          x={6}
+          style={{ fontSize: 14, fill: "#8b8b8b", marginRight: 25 }}
+          x={8}
           y={190}
           angle={270}
           text={`Amount ($)`}

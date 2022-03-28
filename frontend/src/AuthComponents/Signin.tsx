@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/core/styles";
-import { Redirect, useHistory } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import axios from "axios";
 
 interface UserSignIn {
@@ -140,6 +140,11 @@ const Signin: React.FC<UserSignIn> = (props) => {
           Submit
         </Button>
       </CardActions>
+      <span>
+        <Link to={"/signup"} style={{textDecoration: "None"}}>
+          <span>For creating account click </span> here
+        </Link>
+      </span>
     </Card>
   );
 };

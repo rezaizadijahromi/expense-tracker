@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Icon from "@material-ui/core/Icon";
 import { makeStyles } from "@material-ui/core/styles";
-import { Redirect, useHistory } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import axios from "axios";
 import { ExpandLessSharp } from "@material-ui/icons";
 
@@ -16,6 +16,10 @@ interface UserSignIn {
   password: string;
   error: string;
 }
+
+const isActive = (history: any, path: any) => {
+  if (history.location.pathname === path) return { color: "#69f0ae" };
+};
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -151,6 +155,12 @@ const Signin: React.FC<UserSignIn> = (props) => {
           Submit
         </Button>
       </CardActions>
+
+      <span>
+        <Link to={"/signup"} style={{textDecoration: "None"}}>
+          <span>For creating account click </span> here
+        </Link>
+      </span>
     </Card>
   );
 };
